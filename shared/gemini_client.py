@@ -10,10 +10,19 @@ logger = logging.getLogger(__name__)
 _client = None
 
 # Only models confirmed available for Gemini free-tier API keys (2.0 family)
-# 1.5 models return 404 for this key type
 MODELS = [
     "gemini-2.0-flash-lite",
     "gemini-2.0-flash",
+]
+
+# Phrases that indicate the DAILY quota is gone — no point retrying until tomorrow
+_DAILY_QUOTA_PHRASES = [
+    "free_tier_requests",
+    "daily",
+    "per day",
+    "resource_exhausted",
+    "quota exceeded",
+    "billing",
 ]
 
 
@@ -35,22 +44,34 @@ def _parse_retry_delay(error_str: str) -> float:
     return 65.0
 
 
-def _is_rate_limit(err: str) -> bool:
-    return "429" in err or "quota" in err.lower() or (
-        "rate" in err.lower() and "limit" in err.lower()
-    )
+def _is_daily_quota_exhausted(err: str) -> bool:
+    """True when the daily/monthly free-tier quota is gone — retrying is pointless."""
+    err_lower = err.lower()
+    return any(phrase in err_lower for phrase in _DAILY_QUOTA_PHRASES)
+
+
+def _is_per_minute_rate_limit(err: str) -> bool:
+    """True for per-minute RPM throttling — worth retrying after a short wait."""
+    err_lower = err.lower()
+    if "429" not in err and "resource_exhausted" not in err_lower:
+        return False
+    # Daily quota should NOT be retried
+    if _is_daily_quota_exhausted(err):
+        return False
+    return True
 
 
 def _is_model_not_found(err: str) -> bool:
     return "404" in err or "not found" in err.lower() or "not supported" in err.lower()
 
 
-def _call_with_retry(prompt: str, temperature: float, max_tokens: int, max_retries: int = 6) -> str:
+def _call_with_retry(prompt: str, temperature: float, max_tokens: int, max_retries: int = 4) -> str:
     """
     Try each model in MODELS list.
-    - 404/not-found  → skip to next model immediately (no wait)
-    - 429/rate-limit → wait the retry-after hint, then retry same model (up to max_retries)
-    - other errors   → exponential backoff, then move to next model
+    - 404/not-found       → skip to next model immediately
+    - daily quota gone    → raise immediately (no point waiting)
+    - per-minute 429      → wait retry-after hint, retry same model (up to max_retries)
+    - other errors        → exponential backoff, then move to next model
     """
     client = get_client()
     last_error = None
@@ -79,11 +100,20 @@ def _call_with_retry(prompt: str, temperature: float, max_tokens: int, max_retri
                     logger.warning(f"Model '{model_name}' not available — skipping.")
                     break
 
-                elif _is_rate_limit(err):
+                elif _is_daily_quota_exhausted(err):
+                    # No point retrying any model — daily limit is gone
+                    raise RuntimeError(
+                        "Gemini free-tier daily quota exhausted. "
+                        "Get a new API key at https://aistudio.google.com/apikey "
+                        "or wait ~24h for the quota to reset. "
+                        f"Original error: {err[:200]}"
+                    )
+
+                elif _is_per_minute_rate_limit(err):
                     if attempt < max_retries - 1:
                         wait = _parse_retry_delay(err)
                         logger.warning(
-                            f"Rate limited on '{model_name}' "
+                            f"Per-minute rate limit on '{model_name}' "
                             f"(attempt {attempt + 1}/{max_retries}). Waiting {wait:.0f}s..."
                         )
                         time.sleep(wait)
@@ -94,7 +124,10 @@ def _call_with_retry(prompt: str, temperature: float, max_tokens: int, max_retri
                 else:
                     if attempt < max_retries - 1:
                         wait = 2 ** attempt
-                        logger.warning(f"Error on '{model_name}' attempt {attempt + 1}: {err[:120]}. Retrying in {wait}s...")
+                        logger.warning(
+                            f"Error on '{model_name}' attempt {attempt + 1}: {err[:120]}. "
+                            f"Retrying in {wait}s..."
+                        )
                         time.sleep(wait)
                     else:
                         logger.warning(f"Retries exhausted for '{model_name}' — trying next model.")
