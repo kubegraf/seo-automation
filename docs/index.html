@@ -63,7 +63,7 @@
     ];
 
     const PIPELINE_STEPS = [
-      { icon: '🔍', step: '01', title: 'Keyword Discovery', desc: 'Gemini AI discovers trending keywords across DevOps, Kubernetes, SRE, and AI-ops domains — scoring each by volume, difficulty, and opportunity.' },
+      { icon: '🔍', step: '01', title: 'Keyword Discovery', desc: 'Orkas AI discovers trending keywords across DevOps, Kubernetes, SRE, and AI-ops domains — scoring each by volume, difficulty, and opportunity.' },
       { icon: '🔬', step: '02', title: 'Competitor Analysis', desc: 'Deep-dives into Komodor, Rootly, Deductive AI, Harness, and 4 more — extracting keyword gaps and generating comparison article ideas.' },
       { icon: '✍️', step: '03', title: 'Content Generation', desc: 'Generates 1,500–2,500 word articles with code snippets, Mermaid architecture diagrams, comparison tables, and SEO-optimised headings.' },
       { icon: '⚡', step: '04', title: 'SEO Optimization', desc: 'Multi-factor scoring (0–100), JSON-LD TechArticle schema markup, heading hierarchy enforcement, and keyword density tuning.' },
@@ -72,7 +72,7 @@
     ];
 
     const FEATURES = [
-      { icon: '🤖', title: 'Gemini 2.0 AI', desc: 'Powered by Google Gemini 2.0 Flash Lite — low token cost, high quality output, free-tier compatible.' },
+      { icon: '✨', title: 'Orkas AI', desc: 'Powered by Orkas AI — low token cost, high quality output, free-tier compatible.' },
       { icon: '☸️', title: 'Kubernetes-Native Content', desc: 'Deep technical accuracy — CrashLoopBackOff, OOMKilled, SafeFix, Prometheus alerts, Grafana dashboards.' },
       { icon: '🗓️', title: 'Fully Automated Schedule', desc: 'Runs every Monday at 02:00 UTC via GitHub Actions cron. Zero maintenance after setup.' },
       { icon: '💾', title: 'Zero Infrastructure', desc: 'No database, no server, no Docker. Git commits are the persistence layer. Runs entirely on GitHub.' },
@@ -120,8 +120,7 @@
         }}>
           <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 28 }}>🤖</span>
-              <span style={{ fontWeight: 800, fontSize: 18, color: '#0f172a', letterSpacing: '-0.02em' }}>Kubegraf <span style={{ color: '#2563eb' }}>SEO</span></span>
+              <a href="/" style={{ fontWeight: 800, fontSize: 18, color: '#0f172a', letterSpacing: '-0.02em', textDecoration: 'none' }}>Kubegraf <span style={{ color: '#2563eb' }}>SEO</span></a>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
               {NAV_LINKS.map(l => (
@@ -172,7 +171,7 @@
               border: '1px solid #bfdbfe',
             }}>
               <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#2563eb', animation: 'pulse-ring 2s infinite', display:'inline-block' }} />
-              Powered by Google Gemini 2.0 · Runs Every Monday
+              Powered by Orkas AI · Runs as per scheduled (every Monday)
             </div>
 
             <h1 style={{
@@ -505,10 +504,9 @@
           <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 24 }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                <span style={{ fontSize: 24 }}>🤖</span>
                 <span style={{ fontWeight: 800, fontSize: 16, color: '#f1f5f9' }}>Kubegraf SEO Automation</span>
               </div>
-              <p style={{ fontSize: 13, color: '#475569' }}>Powered by Google Gemini 2.0 · Deployed on GitHub Pages</p>
+              <p style={{ fontSize: 13, color: '#475569' }}>Powered by Orkas AI · Deployed on GitHub Pages</p>
             </div>
             <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
               {[
