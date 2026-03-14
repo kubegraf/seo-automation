@@ -2,7 +2,8 @@ import os
 import re
 import time
 import logging
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 logger = logging.getLogger(__name__)
 
@@ -12,23 +13,24 @@ _client = None
 MODELS = [
     "gemini-2.0-flash-lite",
     "gemini-2.0-flash",
-    "gemini-2.0-flash-exp",
-    "gemini-1.5-flash-latest",
-    "gemini-1.5-flash-001",
-    "gemini-pro",
+    "gemini-1.5-flash",
+    "gemini-1.5-flash-8b",
+    "gemini-1.5-pro",
 ]
 
 
-def _make_client(model: str):
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        raise ValueError("GEMINI_API_KEY environment variable not set")
-    genai.configure(api_key=api_key)
-    return genai.GenerativeModel(model)
+def get_client() -> genai.Client:
+    global _client
+    if _client is None:
+        api_key = os.environ.get("GEMINI_API_KEY")
+        if not api_key:
+            raise ValueError("GEMINI_API_KEY environment variable not set")
+        _client = genai.Client(api_key=api_key)
+    return _client
 
 
 def _parse_retry_delay(error_str: str) -> float:
-    """Extract the 'retry in Xs' hint from a 429 error. Default 60s."""
+    """Extract 'retry in Xs' hint from a 429 error. Default 60s."""
     match = re.search(r"retry in ([\d.]+)s", str(error_str))
     if match:
         return min(float(match.group(1)) + 3.0, 120.0)
@@ -47,20 +49,23 @@ def _is_model_not_found(err: str) -> bool:
 
 def _call_with_retry(prompt: str, temperature: float, max_tokens: int, max_retries: int = 4) -> str:
     """
-    Try each model in MODELS list. Within each model, retry on rate limits.
-    Never retry on 404/model-not-found — move to next model immediately.
+    Try each model in MODELS list in order.
+    - On 404/not-found: immediately skip to next model.
+    - On 429/rate-limit: wait the retry-after hint, then retry same model.
+    - On other errors: exponential backoff, then skip to next model.
     """
+    client = get_client()
     last_error = None
 
     for model_name in MODELS:
-        client = _make_client(model_name)
         logger.info(f"Trying model: {model_name}")
 
         for attempt in range(max_retries):
             try:
-                response = client.generate_content(
-                    prompt,
-                    generation_config=genai.types.GenerationConfig(
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
                         temperature=temperature,
                         max_output_tokens=max_tokens,
                     ),
@@ -73,25 +78,28 @@ def _call_with_retry(prompt: str, temperature: float, max_tokens: int, max_retri
                 last_error = e
 
                 if _is_model_not_found(err):
-                    logger.warning(f"Model {model_name} not available: {err[:80]}. Trying next model...")
-                    break  # stop retrying this model, move to next
+                    logger.warning(f"Model '{model_name}' not available — trying next.")
+                    break  # move to next model immediately
 
                 elif _is_rate_limit(err):
                     if attempt < max_retries - 1:
                         wait = _parse_retry_delay(err)
-                        logger.warning(f"Rate limited on {model_name} (attempt {attempt + 1}/{max_retries}). Waiting {wait:.0f}s...")
+                        logger.warning(
+                            f"Rate limited on '{model_name}' "
+                            f"(attempt {attempt + 1}/{max_retries}). Waiting {wait:.0f}s..."
+                        )
                         time.sleep(wait)
                     else:
-                        logger.warning(f"Rate limit retries exhausted for {model_name}. Trying next model...")
+                        logger.warning(f"Rate limit retries exhausted for '{model_name}' — trying next model.")
                         break
 
                 else:
                     if attempt < max_retries - 1:
                         wait = 2 ** attempt
-                        logger.warning(f"Error on {model_name} attempt {attempt + 1}: {err[:80]}. Retrying in {wait}s...")
+                        logger.warning(f"Error on '{model_name}' attempt {attempt + 1}: {err[:120]}. Retrying in {wait}s...")
                         time.sleep(wait)
                     else:
-                        logger.warning(f"Retries exhausted for {model_name}. Trying next model...")
+                        logger.warning(f"Retries exhausted for '{model_name}' — trying next model.")
                         break
 
     raise RuntimeError(f"All models failed. Last error: {last_error}")
