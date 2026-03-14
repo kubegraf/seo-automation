@@ -47,6 +47,16 @@
       return [ref, visible];
     }
 
+    function useWindowWidth() {
+      const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+      useEffect(() => {
+        const fn = () => setWidth(window.innerWidth);
+        window.addEventListener('resize', fn);
+        return () => window.removeEventListener('resize', fn);
+      }, []);
+      return width;
+    }
+
     // ── data ─────────────────────────────────────────────────────────────────
     const NAV_LINKS = [
       { label: 'Pipeline', href: '#pipeline' },
@@ -104,48 +114,73 @@
     function Navbar() {
       const [scrolled, setScrolled] = useState(false);
       const [open, setOpen] = useState(false);
+      const isMobile = useWindowWidth() < 768;
       useEffect(() => {
         const fn = () => setScrolled(window.scrollY > 20);
         window.addEventListener('scroll', fn);
         return () => window.removeEventListener('scroll', fn);
       }, []);
+      // Close menu on resize to desktop
+      useEffect(() => { if (!isMobile) setOpen(false); }, [isMobile]);
       return (
         <nav style={{
           position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
-          background: scrolled ? 'rgba(255,255,255,0.95)' : 'transparent',
-          backdropFilter: scrolled ? 'blur(12px)' : 'none',
-          borderBottom: scrolled ? '1px solid #e2e8f0' : 'none',
+          background: (scrolled || open) ? 'rgba(255,255,255,0.97)' : 'transparent',
+          backdropFilter: (scrolled || open) ? 'blur(12px)' : 'none',
+          borderBottom: (scrolled || open) ? '1px solid #e2e8f0' : 'none',
           transition: 'all 0.3s ease',
-          padding: '0 32px',
         }}>
-          <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <a href="/" style={{ fontWeight: 800, fontSize: 18, color: '#0f172a', letterSpacing: '-0.02em', textDecoration: 'none' }}>Kubegraf <span style={{ color: '#2563eb' }}>SEO</span></a>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64, padding: '0 20px' }}>
+            <a href="/" style={{ fontWeight: 800, fontSize: 18, color: '#0f172a', letterSpacing: '-0.02em', textDecoration: 'none', whiteSpace: 'nowrap' }}>
+              Kubegraf <span style={{ color: '#2563eb' }}>SEO</span>
+            </a>
+            {/* Desktop links */}
+            {!isMobile && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+                {NAV_LINKS.map(l => (
+                  <a key={l.label} href={l.href} style={{ fontSize: 14, fontWeight: 500, color: '#475569', textDecoration: 'none' }}
+                     onMouseEnter={e => e.target.style.color='#2563eb'} onMouseLeave={e => e.target.style.color='#475569'}>
+                    {l.label}
+                  </a>
+                ))}
+                <a href="dashboard/" style={{ background: '#2563eb', color: '#fff', padding: '8px 20px', borderRadius: 8, fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>
+                  Dashboard →
+                </a>
+              </div>
+            )}
+            {/* Hamburger */}
+            {isMobile && (
+              <button onClick={() => setOpen(o => !o)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                <span style={{ display: 'block', width: 22, height: 2, background: '#0f172a', borderRadius: 2, transition: 'all 0.2s', transform: open ? 'rotate(45deg) translate(5px,5px)' : 'none' }} />
+                <span style={{ display: 'block', width: 22, height: 2, background: '#0f172a', borderRadius: 2, opacity: open ? 0 : 1, transition: 'all 0.2s' }} />
+                <span style={{ display: 'block', width: 22, height: 2, background: '#0f172a', borderRadius: 2, transition: 'all 0.2s', transform: open ? 'rotate(-45deg) translate(5px,-5px)' : 'none' }} />
+              </button>
+            )}
+          </div>
+          {/* Mobile menu */}
+          {isMobile && open && (
+            <div style={{ background: '#fff', borderTop: '1px solid #e2e8f0', padding: '16px 20px 24px', display: 'flex', flexDirection: 'column', gap: 4 }}>
               {NAV_LINKS.map(l => (
-                <a key={l.label} href={l.href} style={{ fontSize: 14, fontWeight: 500, color: '#475569', textDecoration: 'none', transition: 'color 0.2s' }}
-                   onMouseEnter={e => e.target.style.color='#2563eb'} onMouseLeave={e => e.target.style.color='#475569'}>
+                <a key={l.label} href={l.href} onClick={() => setOpen(false)}
+                   style={{ fontSize: 15, fontWeight: 500, color: '#374151', textDecoration: 'none', padding: '10px 12px', borderRadius: 8 }}>
                   {l.label}
                 </a>
               ))}
-              <a href="dashboard/" style={{
-                background: '#2563eb', color: '#fff', padding: '8px 20px', borderRadius: 8,
-                fontSize: 14, fontWeight: 600, textDecoration: 'none', transition: 'background 0.2s',
-              }} onMouseEnter={e => e.target.style.background='#1d4ed8'} onMouseLeave={e => e.target.style.background='#2563eb'}>
+              <a href="dashboard/" onClick={() => setOpen(false)} style={{ marginTop: 8, background: '#2563eb', color: '#fff', padding: '12px 20px', borderRadius: 8, fontSize: 15, fontWeight: 600, textDecoration: 'none', textAlign: 'center' }}>
                 Dashboard →
               </a>
             </div>
-          </div>
+          )}
         </nav>
       );
     }
 
     function Hero() {
+      const isMobile = useWindowWidth() < 768;
       return (
         <section style={{
           minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center',
-          justifyContent: 'center', textAlign: 'center', padding: '120px 32px 80px',
+          justifyContent: 'center', textAlign: 'center', padding: isMobile ? '100px 20px 60px' : '120px 32px 80px',
           background: 'linear-gradient(180deg, #eff6ff 0%, #ffffff 60%)',
           position: 'relative', overflow: 'hidden',
         }}>
@@ -221,7 +256,7 @@
 
             {/* Stats */}
             <div style={{
-              display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1,
+              display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: 1,
               background: '#e2e8f0', borderRadius: 16, overflow: 'hidden',
               border: '1px solid #e2e8f0', maxWidth: 640, margin: '0 auto',
             }}>
@@ -238,8 +273,9 @@
     }
 
     function Section({ id, children, bg = '#ffffff', style = {} }) {
+      const isMobile = useWindowWidth() < 768;
       return (
-        <section id={id} style={{ padding: '96px 32px', background: bg, ...style }}>
+        <section id={id} style={{ padding: isMobile ? '56px 20px' : '96px 32px', background: bg, ...style }}>
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
             {children}
           </div>
@@ -272,52 +308,78 @@
     }
 
     function PipelineSection() {
+      const isMobile = useWindowWidth() < 768;
       return (
         <Section id="pipeline" bg="#f8fafc">
           <SectionHeader badge="How It Works" title="7-Stage Automated Pipeline" sub="From keyword discovery to published article — every Monday, automatically." />
-          <div style={{ position: 'relative' }}>
-            {/* connector line */}
-            <div style={{
-              position: 'absolute', left: '50%', top: 40, bottom: 40,
-              width: 2, background: 'linear-gradient(180deg, #2563eb, #7c3aed)',
-              transform: 'translateX(-50%)', opacity: 0.15,
-            }} />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          {isMobile ? (
+            /* Mobile: simple vertical list */
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {PIPELINE_STEPS.map((s, i) => {
                 const [ref, visible] = useInView();
-                const left = i % 2 === 0;
                 return (
                   <div key={i} ref={ref} style={{
-                    display: 'grid', gridTemplateColumns: '1fr 80px 1fr',
-                    alignItems: 'center', gap: 24,
-                    opacity: visible ? 1 : 0,
-                    transform: visible ? 'translateY(0)' : 'translateY(24px)',
-                    transition: `all 0.5s ease ${i * 0.08}s`,
+                    display: 'flex', alignItems: 'flex-start', gap: 16,
+                    opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)',
+                    transition: `all 0.4s ease ${i * 0.06}s`,
                   }}>
-                    {/* left content */}
-                    <div style={{ textAlign: 'right', paddingRight: 24, ...(left ? {} : { visibility: 'hidden' }) }}>
-                      {left && <PipelineCard step={s} align="right" />}
-                    </div>
-                    {/* center dot */}
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                      <div style={{
-                        width: 52, height: 52, borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #2563eb, #7c3aed)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: 22, boxShadow: '0 4px 16px rgba(37,99,235,0.3)',
-                        border: '3px solid #fff',
-                      }}>{s.icon}</div>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.1em' }}>{s.step}</span>
-                    </div>
-                    {/* right content */}
-                    <div style={{ paddingLeft: 24, ...(!left ? {} : { visibility: 'hidden' }) }}>
-                      {!left && <PipelineCard step={s} align="left" />}
+                    <div style={{
+                      width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
+                      background: 'linear-gradient(135deg, #2563eb, #7c3aed)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 20, boxShadow: '0 4px 12px rgba(37,99,235,0.3)',
+                    }}>{s.icon}</div>
+                    <div style={{ background: '#fff', borderRadius: 12, padding: '16px 20px', border: '1px solid #e2e8f0', flex: 1 }}>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.1em', marginBottom: 4 }}>STEP {s.step}</div>
+                      <h3 style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', marginBottom: 6 }}>{s.title}</h3>
+                      <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.6 }}>{s.desc}</p>
                     </div>
                   </div>
                 );
               })}
             </div>
-          </div>
+          ) : (
+            /* Desktop: zigzag */
+            <div style={{ position: 'relative' }}>
+              <div style={{
+                position: 'absolute', left: '50%', top: 40, bottom: 40,
+                width: 2, background: 'linear-gradient(180deg, #2563eb, #7c3aed)',
+                transform: 'translateX(-50%)', opacity: 0.15,
+              }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                {PIPELINE_STEPS.map((s, i) => {
+                  const [ref, visible] = useInView();
+                  const left = i % 2 === 0;
+                  return (
+                    <div key={i} ref={ref} style={{
+                      display: 'grid', gridTemplateColumns: '1fr 80px 1fr',
+                      alignItems: 'center', gap: 24,
+                      opacity: visible ? 1 : 0,
+                      transform: visible ? 'translateY(0)' : 'translateY(24px)',
+                      transition: `all 0.5s ease ${i * 0.08}s`,
+                    }}>
+                      <div style={{ textAlign: 'right', paddingRight: 24, ...(left ? {} : { visibility: 'hidden' }) }}>
+                        {left && <PipelineCard step={s} align="right" />}
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                        <div style={{
+                          width: 52, height: 52, borderRadius: '50%',
+                          background: 'linear-gradient(135deg, #2563eb, #7c3aed)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: 22, boxShadow: '0 4px 16px rgba(37,99,235,0.3)',
+                          border: '3px solid #fff',
+                        }}>{s.icon}</div>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.1em' }}>{s.step}</span>
+                      </div>
+                      <div style={{ paddingLeft: 24, ...(!left ? {} : { visibility: 'hidden' }) }}>
+                        {!left && <PipelineCard step={s} align="left" />}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </Section>
       );
     }

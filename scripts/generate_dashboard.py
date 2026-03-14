@@ -25,7 +25,7 @@ DASHBOARD_HTML = '''<!DOCTYPE html>
         body {{ font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f8fafc; color: #1e293b; }}
 
         /* Navbar */
-        .navbar {{ background: #fff; border-bottom: 1px solid #e2e8f0; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 64px; position: sticky; top: 0; z-index: 50; }}
+        .navbar {{ background: #fff; border-bottom: 1px solid #e2e8f0; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; min-height: 64px; position: sticky; top: 0; z-index: 50; flex-wrap: wrap; }}
         .navbar-brand {{ font-size: 18px; font-weight: 700; color: #2563eb; text-decoration: none; letter-spacing: -0.01em; white-space: nowrap; }}
         .navbar-links {{ display: flex; align-items: center; gap: 8px; }}
         .navbar-links a {{ font-size: 14px; font-weight: 500; color: #64748b; text-decoration: none; padding: 8px 14px; border-radius: 8px; transition: all 0.15s; }}
@@ -33,6 +33,23 @@ DASHBOARD_HTML = '''<!DOCTYPE html>
         .navbar-links a.active {{ color: #2563eb; background: #eff6ff; }}
         .btn-primary {{ background: #2563eb; color: #fff !important; padding: 8px 18px !important; border-radius: 8px; font-weight: 600 !important; }}
         .btn-primary:hover {{ background: #1d4ed8 !important; color: #fff !important; }}
+        .hamburger {{ display: none; background: none; border: none; cursor: pointer; padding: 8px; flex-direction: column; gap: 5px; }}
+        .hamburger span {{ display: block; width: 22px; height: 2px; background: #0f172a; border-radius: 2px; }}
+        .mobile-menu {{ display: none; width: 100%; background: #fff; border-top: 1px solid #e2e8f0; padding: 12px 16px 20px; flex-direction: column; gap: 4px; }}
+        .mobile-menu a {{ font-size: 15px; font-weight: 500; color: #374151; text-decoration: none; padding: 10px 12px; border-radius: 8px; display: block; }}
+        .mobile-menu a.active {{ color: #2563eb; background: #eff6ff; }}
+        .mobile-menu .btn-primary {{ text-align: center; margin-top: 8px; padding: 12px !important; }}
+        .table-wrap {{ overflow-x: auto; -webkit-overflow-scrolling: touch; }}
+        @media (max-width: 640px) {{
+          .navbar-links {{ display: none; }}
+          .hamburger {{ display: flex; }}
+          .mobile-menu.open {{ display: flex; }}
+          .stats-grid {{ grid-template-columns: repeat(2, 1fr) !important; padding: 16px; gap: 12px; }}
+          .section {{ padding: 0 16px 24px; }}
+          .page-header {{ padding: 24px 16px 20px; }}
+          .tabs {{ width: 100%; overflow-x: auto; }}
+          .competitor-grid {{ grid-template-columns: 1fr !important; }}
+        }}
 
         /* Page header */
         .page-header {{ background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border-bottom: 1px solid #e2e8f0; padding: 36px 32px 28px; }}
@@ -110,6 +127,15 @@ DASHBOARD_HTML = '''<!DOCTYPE html>
             <a href="./" class="active">Dashboard</a>
             <a href="https://github.com/kubegraf/seo-automation" class="btn-primary">GitHub</a>
         </div>
+        <button class="hamburger" onclick="this.closest('nav').querySelector('.mobile-menu').classList.toggle('open')" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="mobile-menu">
+            <a href="../">Home</a>
+            <a href="../blog/">Blog</a>
+            <a href="./" class="active">Dashboard</a>
+            <a href="https://github.com/kubegraf/seo-automation" class="btn-primary">GitHub</a>
+        </div>
     </nav>
 
     <div class="page-header">
@@ -150,7 +176,7 @@ DASHBOARD_HTML = '''<!DOCTYPE html>
 
         <div id="articles" class="tab-content active">
             <h2>Generated Articles</h2>
-            <table class="table">
+            <div class="table-wrap"><table class="table">
                 <thead>
                     <tr>
                         <th>Title</th>
@@ -164,7 +190,7 @@ DASHBOARD_HTML = '''<!DOCTYPE html>
                 <tbody>
                     {articles_rows}
                 </tbody>
-            </table>
+            </table></div>
         </div>
 
         <div id="keywords" class="tab-content">

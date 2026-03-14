@@ -38,11 +38,28 @@ ARTICLE_HTML = """<!DOCTYPE html>
   <style>
     *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
     body {{ font-family: 'Inter', sans-serif; background: #f8fafc; color: #1e293b; line-height: 1.7; }}
-    .navbar {{ background: #fff; border-bottom: 1px solid #e2e8f0; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 64px; position: sticky; top: 0; z-index: 50; }}
+    .navbar {{ background: #fff; border-bottom: 1px solid #e2e8f0; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; min-height: 64px; position: sticky; top: 0; z-index: 50; flex-wrap: wrap; }}
     .navbar-links {{ display: flex; align-items: center; gap: 8px; }}
     .navbar-links a {{ font-size: 14px; font-weight: 500; color: #64748b; text-decoration: none; padding: 8px 14px; border-radius: 8px; }}
     .navbar-links a:hover {{ color: #2563eb; background: #eff6ff; }}
     .btn-primary {{ background: #2563eb; color: #fff !important; border-radius: 8px; font-weight: 600 !important; }}
+    .hamburger {{ display: none; background: none; border: none; cursor: pointer; padding: 8px; flex-direction: column; gap: 5px; }}
+    .hamburger span {{ display: block; width: 22px; height: 2px; background: #0f172a; border-radius: 2px; }}
+    .mobile-menu {{ display: none; width: 100%; background: #fff; border-top: 1px solid #e2e8f0; padding: 12px 16px 20px; flex-direction: column; gap: 4px; }}
+    .mobile-menu a {{ font-size: 15px; font-weight: 500; color: #374151; text-decoration: none; padding: 10px 12px; border-radius: 8px; display: block; }}
+    .mobile-menu .btn-primary {{ text-align: center; margin-top: 8px; padding: 12px !important; }}
+    @media (max-width: 768px) {{
+      .navbar-links {{ display: none; }}
+      .hamburger {{ display: flex; }}
+      .mobile-menu.open {{ display: flex; }}
+      .article-header {{ padding: 32px 20px 28px; }}
+      .article-header h1 {{ font-size: 24px; }}
+      .layout {{ grid-template-columns: 1fr; padding: 24px 16px; gap: 24px; }}
+      .sidebar {{ position: static; }}
+      .article-body {{ padding: 24px 16px; }}
+      .article-body pre {{ margin: 16px -16px; border-radius: 0; }}
+      .article-body table {{ font-size: 13px; }}
+    }}
     .article-header {{ background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border-bottom: 1px solid #e2e8f0; padding: 56px 32px 48px; }}
     .article-header-inner {{ max-width: 800px; margin: 0 auto; }}
     .article-meta {{ display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }}
@@ -106,6 +123,15 @@ ARTICLE_HTML = """<!DOCTYPE html>
     <div class="navbar-links">
       <a href="/seo-automation/">Home</a>
       <a href="/seo-automation/blog/">Blog</a>
+      <a href="/seo-automation/dashboard/">Dashboard</a>
+      <a href="https://github.com/kubegraf/seo-automation" class="btn-primary">GitHub</a>
+    </div>
+    <button class="hamburger" onclick="this.closest('nav').querySelector('.mobile-menu').classList.toggle('open')" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="mobile-menu">
+      <a href="/seo-automation/">Home</a>
+      <a href="/seo-automation/blog/" class="active">Blog</a>
       <a href="/seo-automation/dashboard/">Dashboard</a>
       <a href="https://github.com/kubegraf/seo-automation" class="btn-primary">GitHub</a>
     </div>
