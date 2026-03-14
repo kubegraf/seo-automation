@@ -1,1 +1,219 @@
-[]
+[
+  {
+    "id": "908ff708-3015-43af-ae0e-3527e171b791",
+    "name": "Deductive AI",
+    "domain": "deductive.ai",
+    "focus_areas": [
+      "ai incident analysis",
+      "root cause analysis",
+      "incident triage",
+      "alert correlation"
+    ],
+    "target_keywords": [
+      "ai incident analysis",
+      "root cause analysis ai",
+      "incident triage ai",
+      "alert fatigue reduction",
+      "automated postmortem"
+    ],
+    "gap_keywords": [
+      "deductive ai alternative",
+      "kubegraf vs deductive ai"
+    ],
+    "comparison_article_ideas": [
+      "Kubegraf vs Deductive AI: Which AI SRE Platform is Right for You?"
+    ],
+    "last_analyzed": "2026-03-14T12:07:21.952553",
+    "traffic_tier": "low"
+  },
+  {
+    "id": "f1224ada-098d-4d49-9c03-6aeeced2444c",
+    "name": "Rootly",
+    "domain": "rootly.com",
+    "focus_areas": [
+      "incident management",
+      "on-call management",
+      "slack incident response",
+      "incident retrospectives"
+    ],
+    "target_keywords": [
+      "incident management platform",
+      "on-call management",
+      "incident response slack",
+      "incident retrospective tool",
+      "pagerduty alternative"
+    ],
+    "gap_keywords": [
+      "rootly alternative",
+      "kubegraf vs rootly"
+    ],
+    "comparison_article_ideas": [
+      "Kubegraf vs Rootly: Which AI SRE Platform is Right for You?"
+    ],
+    "last_analyzed": "2026-03-14T12:07:25.158866",
+    "traffic_tier": "high"
+  },
+  {
+    "id": "6ebc1a29-6ac4-4145-958d-b5784f6656b0",
+    "name": "SRE.ai",
+    "domain": "sre.ai",
+    "focus_areas": [
+      "sre automation",
+      "ai reliability",
+      "autonomous sre",
+      "self-healing infrastructure"
+    ],
+    "target_keywords": [
+      "sre automation",
+      "ai sre platform",
+      "autonomous sre",
+      "self-healing kubernetes",
+      "reliability engineering ai"
+    ],
+    "gap_keywords": [
+      "sre.ai alternative",
+      "kubegraf vs sre.ai"
+    ],
+    "comparison_article_ideas": [
+      "Kubegraf vs SRE.ai: Which AI SRE Platform is Right for You?"
+    ],
+    "last_analyzed": "2026-03-14T12:07:28.369842",
+    "traffic_tier": "low"
+  },
+  {
+    "id": "5b051cc3-d8dd-4379-8f00-fc34409ebc9b",
+    "name": "Resolve Systems",
+    "domain": "resolve.io",
+    "focus_areas": [
+      "it automation",
+      "itsm automation",
+      "network automation",
+      "incident automation"
+    ],
+    "target_keywords": [
+      "it automation platform",
+      "itsm automation",
+      "network incident automation",
+      "it operations automation",
+      "runbook automation"
+    ],
+    "gap_keywords": [
+      "resolve systems alternative",
+      "kubegraf vs resolve systems"
+    ],
+    "comparison_article_ideas": [
+      "Kubegraf vs Resolve Systems: Which AI SRE Platform is Right for You?"
+    ],
+    "last_analyzed": "2026-03-14T12:07:31.596925",
+    "traffic_tier": "medium"
+  },
+  {
+    "id": "c64dff58-aa0c-43fe-9a3c-54f9f62e2dbf",
+    "name": "Incident.io",
+    "domain": "incident.io",
+    "focus_areas": [
+      "incident management",
+      "on-call alerting",
+      "status pages",
+      "incident workflows"
+    ],
+    "target_keywords": [
+      "incident management platform",
+      "on-call alerting",
+      "status page software",
+      "incident workflow",
+      "incident.io"
+    ],
+    "gap_keywords": [
+      "incident.io alternative",
+      "kubegraf vs incident.io"
+    ],
+    "comparison_article_ideas": [
+      "Kubegraf vs Incident.io: Which AI SRE Platform is Right for You?"
+    ],
+    "last_analyzed": "2026-03-14T12:07:34.840458",
+    "traffic_tier": "high"
+  },
+  {
+    "id": "eb2a80c4-0da2-4913-becc-1d6f117ddabb",
+    "name": "Komodor",
+    "domain": "komodor.com",
+    "focus_areas": [
+      "kubernetes troubleshooting",
+      "k8s debugging",
+      "kubernetes change tracking",
+      "kubernetes health monitor"
+    ],
+    "target_keywords": [
+      "kubernetes troubleshooting tool",
+      "k8s debugging",
+      "kubernetes change tracking",
+      "komodor kubernetes",
+      "kubernetes health monitoring"
+    ],
+    "gap_keywords": [
+      "komodor alternative",
+      "kubegraf vs komodor"
+    ],
+    "comparison_article_ideas": [
+      "Kubegraf vs Komodor: Which AI SRE Platform is Right for You?"
+    ],
+    "last_analyzed": "2026-03-14T12:07:38.069564",
+    "traffic_tier": "medium"
+  },
+  {
+    "id": "566c4e24-441c-449b-a76e-89d0fb441ac1",
+    "name": "Dash0",
+    "domain": "dash0.com",
+    "focus_areas": [
+      "kubernetes observability",
+      "opentelemetry platform",
+      "cloud native monitoring",
+      "perses dashboards"
+    ],
+    "target_keywords": [
+      "kubernetes observability platform",
+      "opentelemetry kubernetes",
+      "cloud native monitoring",
+      "otel collector kubernetes",
+      "dash0 observability"
+    ],
+    "gap_keywords": [
+      "dash0 alternative",
+      "kubegraf vs dash0"
+    ],
+    "comparison_article_ideas": [
+      "Kubegraf vs Dash0: Which AI SRE Platform is Right for You?"
+    ],
+    "last_analyzed": "2026-03-14T12:07:41.297519",
+    "traffic_tier": "low"
+  },
+  {
+    "id": "66ba2ffd-40bd-4b4d-b063-b002d0080393",
+    "name": "Harness",
+    "domain": "harness.io",
+    "focus_areas": [
+      "ci/cd platform",
+      "devops platform",
+      "feature flags",
+      "chaos engineering",
+      "cloud cost management"
+    ],
+    "target_keywords": [
+      "ci cd platform",
+      "harness io",
+      "feature flags platform",
+      "chaos engineering kubernetes",
+      "devops automation platform"
+    ],
+    "gap_keywords": [
+      "harness alternative",
+      "kubegraf vs harness"
+    ],
+    "comparison_article_ideas": [
+      "Kubegraf vs Harness: Which AI SRE Platform is Right for You?"
+    ],
+    "last_analyzed": "2026-03-14T12:07:44.527400",
+    "traffic_tier": "high"
+  }
+]
