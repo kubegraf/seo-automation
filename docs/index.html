@@ -1,127 +1,551 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kubegraf SEO Automation</title>
-  <meta name="description" content="AI-driven SEO automation system for Kubegraf — automatically generates and publishes technical content about Kubernetes, SRE, and AI operations.">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kubegraf SEO Automation — AI Content Pipeline</title>
+  <meta name="description" content="AI-driven SEO automation system that automatically generates and publishes technical content to grow Kubegraf's developer adoption." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f172a; color: #e2e8f0; }
-    .hero { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #0ea5e9 100%); padding: 80px 32px; text-align: center; }
-    .hero h1 { font-size: 48px; font-weight: 800; color: #fff; margin-bottom: 16px; }
-    .hero p { font-size: 20px; color: #bae6fd; max-width: 600px; margin: 0 auto 32px; line-height: 1.6; }
-    .badge { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 6px 16px; border-radius: 9999px; font-size: 13px; margin: 4px; }
-    .nav-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; padding: 48px 32px; max-width: 1100px; margin: 0 auto; }
-    .card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 32px; text-decoration: none; color: inherit; transition: border-color 0.2s, transform 0.2s; display: block; }
-    .card:hover { border-color: #3b82f6; transform: translateY(-2px); }
-    .card .icon { font-size: 40px; margin-bottom: 16px; }
-    .card h2 { font-size: 20px; font-weight: 700; color: #f1f5f9; margin-bottom: 8px; }
-    .card p { font-size: 14px; color: #94a3b8; line-height: 1.6; }
-    .card .arrow { color: #3b82f6; font-size: 20px; margin-top: 16px; display: block; }
-    .pipeline { padding: 48px 32px; max-width: 900px; margin: 0 auto; }
-    .pipeline h2 { font-size: 28px; font-weight: 700; text-align: center; margin-bottom: 32px; color: #f1f5f9; }
-    .steps { display: flex; flex-direction: column; gap: 0; }
-    .step { display: flex; align-items: flex-start; gap: 20px; padding: 20px 0; border-left: 2px solid #3b82f6; padding-left: 24px; margin-left: 20px; position: relative; }
-    .step::before { content: ""; width: 12px; height: 12px; background: #3b82f6; border-radius: 50%; position: absolute; left: -7px; top: 26px; }
-    .step-num { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; }
-    .step-title { font-size: 16px; font-weight: 600; color: #f1f5f9; }
-    .step-desc { font-size: 14px; color: #94a3b8; margin-top: 4px; }
-    footer { text-align: center; padding: 32px; color: #475569; font-size: 13px; border-top: 1px solid #1e293b; }
-    footer a { color: #3b82f6; text-decoration: none; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #ffffff; color: #0f172a; -webkit-font-smoothing: antialiased; }
+    :root {
+      --blue: #2563eb; --blue-light: #3b82f6; --blue-50: #eff6ff; --blue-100: #dbeafe;
+      --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1;
+      --slate-400: #94a3b8; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155;
+      --slate-800: #1e293b; --slate-900: #0f172a;
+    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    @keyframes pulse-ring { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37,99,235,0.4); } 70% { transform: scale(1); box-shadow: 0 0 0 12px rgba(37,99,235,0); } 100% { transform: scale(0.95); } }
+    .fade-up { animation: fadeUp 0.6s ease forwards; }
+    .float { animation: float 4s ease-in-out infinite; }
   </style>
 </head>
 <body>
+  <div id="root"></div>
 
-  <div class="hero">
-    <h1>🤖 Kubegraf SEO Automation</h1>
-    <p>AI-driven content pipeline that automatically generates and publishes SEO-optimized technical articles to grow Kubegraf's developer adoption.</p>
-    <span class="badge">Google Gemini AI</span>
-    <span class="badge">GitHub Actions</span>
-    <span class="badge">Zero Infrastructure</span>
-    <span class="badge">Runs Every Monday</span>
-  </div>
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
 
-  <div class="nav-cards">
-    <a href="dashboard/" class="card">
-      <div class="icon">📊</div>
-      <h2>SEO Dashboard</h2>
-      <p>View all generated articles, keyword rankings, competitor analysis, and weekly SEO performance reports.</p>
-      <span class="arrow">→ Open Dashboard</span>
-    </a>
-    <a href="blog/" class="card">
-      <div class="icon">📝</div>
-      <h2>Blog Articles</h2>
-      <p>AI-generated technical articles on Kubernetes operations, SRE automation, incident management, and AI ops.</p>
-      <span class="arrow">→ Read Articles</span>
-    </a>
-    <a href="https://github.com/kubegraf/seo-automation" class="card">
-      <div class="icon">⚙️</div>
-      <h2>Pipeline Source</h2>
-      <p>Full open-source pipeline: keyword discovery, competitor analysis, content generation, SEO optimization, and publishing.</p>
-      <span class="arrow">→ View on GitHub</span>
-    </a>
-    <a href="https://kubegraf.io" class="card">
-      <div class="icon">☸️</div>
-      <h2>Kubegraf Platform</h2>
-      <p>AI-powered Kubernetes SRE platform — automatic root cause analysis, SafeFix remediations, and incident automation.</p>
-      <span class="arrow">→ Visit Kubegraf</span>
-    </a>
-  </div>
+    // ── tiny helpers ──────────────────────────────────────────────────────────
+    const cn = (...c) => c.filter(Boolean).join(' ');
 
-  <div class="pipeline">
-    <h2>How the Pipeline Works</h2>
-    <div class="steps">
-      <div class="step">
-        <div>
-          <div class="step-num">Step 1</div>
-          <div class="step-title">🔍 Keyword Discovery</div>
-          <div class="step-desc">Gemini AI discovers 25+ trending keywords in DevOps, Kubernetes, SRE, and AI-ops domains.</div>
-        </div>
-      </div>
-      <div class="step">
-        <div>
-          <div class="step-num">Step 2</div>
-          <div class="step-title">🔬 Competitor Analysis</div>
-          <div class="step-desc">Analyzes 8 competitors (Komodor, Rootly, Deductive AI, Harness…) to find keyword gaps and comparison article opportunities.</div>
-        </div>
-      </div>
-      <div class="step">
-        <div>
-          <div class="step-num">Step 3</div>
-          <div class="step-title">✍️ Content Generation</div>
-          <div class="step-desc">Generates full 1500–2500 word articles with headings, code snippets, Mermaid diagrams, and internal links.</div>
-        </div>
-      </div>
-      <div class="step">
-        <div>
-          <div class="step-num">Step 4</div>
-          <div class="step-title">⚡ SEO Optimization</div>
-          <div class="step-desc">Scores each article (0–100), adds JSON-LD schema markup, enforces heading hierarchy, and optimizes keyword density.</div>
-        </div>
-      </div>
-      <div class="step">
-        <div>
-          <div class="step-num">Step 5</div>
-          <div class="step-title">🚀 Publishing</div>
-          <div class="step-desc">Publishes articles as markdown to this GitHub Pages site and updates the SEO dashboard.</div>
-        </div>
-      </div>
-      <div class="step">
-        <div>
-          <div class="step-num">Step 6</div>
-          <div class="step-title">📊 SEO Analytics</div>
-          <div class="step-desc">Tracks keyword rankings, estimates organic traffic, and generates weekly recommendations.</div>
-        </div>
-      </div>
-    </div>
-  </div>
+    function useInView(threshold = 0.15) {
+      const ref = useRef(null);
+      const [visible, setVisible] = useState(false);
+      useEffect(() => {
+        const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold });
+        if (ref.current) io.observe(ref.current);
+        return () => io.disconnect();
+      }, []);
+      return [ref, visible];
+    }
 
-  <footer>
-    Kubegraf SEO Automation — Powered by Google Gemini &amp; GitHub Actions —
-    <a href="https://github.com/kubegraf/seo-automation">GitHub</a> ·
-    <a href="https://github.com/kubegraf/seo-automation/actions">Pipeline Status</a>
-  </footer>
+    // ── data ─────────────────────────────────────────────────────────────────
+    const NAV_LINKS = [
+      { label: 'Pipeline', href: '#pipeline' },
+      { label: 'Features', href: '#features' },
+      { label: 'Competitors', href: '#competitors' },
+      { label: 'Articles', href: '#articles' },
+    ];
 
+    const STATS = [
+      { value: '8', label: 'Competitors Analyzed' },
+      { value: '25+', label: 'Keywords Tracked' },
+      { value: '2/week', label: 'New Articles' },
+      { value: '100%', label: 'Automated' },
+    ];
+
+    const PIPELINE_STEPS = [
+      { icon: '🔍', step: '01', title: 'Keyword Discovery', desc: 'Gemini AI discovers trending keywords across DevOps, Kubernetes, SRE, and AI-ops domains — scoring each by volume, difficulty, and opportunity.' },
+      { icon: '🔬', step: '02', title: 'Competitor Analysis', desc: 'Deep-dives into Komodor, Rootly, Deductive AI, Harness, and 4 more — extracting keyword gaps and generating comparison article ideas.' },
+      { icon: '✍️', step: '03', title: 'Content Generation', desc: 'Generates 1,500–2,500 word articles with code snippets, Mermaid architecture diagrams, comparison tables, and SEO-optimised headings.' },
+      { icon: '⚡', step: '04', title: 'SEO Optimization', desc: 'Multi-factor scoring (0–100), JSON-LD TechArticle schema markup, heading hierarchy enforcement, and keyword density tuning.' },
+      { icon: '🚀', step: '05', title: 'Publishing', desc: 'Commits markdown to GitHub Pages, generates the blog index, and updates the live SEO dashboard — all via Git.' },
+      { icon: '📊', step: '06', title: 'SEO Analytics', desc: 'Tracks keyword rankings, estimates organic traffic, identifies update opportunities, and sends a weekly AI-generated recommendations report.' },
+    ];
+
+    const FEATURES = [
+      { icon: '🤖', title: 'Gemini 2.0 AI', desc: 'Powered by Google Gemini 2.0 Flash Lite — low token cost, high quality output, free-tier compatible.' },
+      { icon: '☸️', title: 'Kubernetes-Native Content', desc: 'Deep technical accuracy — CrashLoopBackOff, OOMKilled, SafeFix, Prometheus alerts, Grafana dashboards.' },
+      { icon: '🗓️', title: 'Fully Automated Schedule', desc: 'Runs every Monday at 02:00 UTC via GitHub Actions cron. Zero maintenance after setup.' },
+      { icon: '💾', title: 'Zero Infrastructure', desc: 'No database, no server, no Docker. Git commits are the persistence layer. Runs entirely on GitHub.' },
+      { icon: '🔗', title: 'Competitor Intelligence', desc: '8 competitors continuously monitored: Komodor, Rootly, Incident.io, Harness, Dash0, Deductive AI, SRE.ai, Resolve.' },
+      { icon: '📈', title: 'SEO-First Articles', desc: 'Every article includes schema markup, optimised meta tags, internal links, code blocks, and architecture diagrams.' },
+    ];
+
+    const COMPETITORS = [
+      { name: 'Komodor', focus: 'Kubernetes troubleshooting', tier: 'Medium', color: '#f59e0b' },
+      { name: 'Rootly', focus: 'Incident management', tier: 'High', color: '#10b981' },
+      { name: 'Deductive AI', focus: 'AI incident analysis', tier: 'Low', color: '#6366f1' },
+      { name: 'Incident.io', focus: 'Incident platform', tier: 'High', color: '#10b981' },
+      { name: 'Harness', focus: 'CI/CD + DevOps', tier: 'High', color: '#10b981' },
+      { name: 'Dash0', focus: 'K8s observability', tier: 'Low', color: '#6366f1' },
+      { name: 'SRE.ai', focus: 'AI SRE platform', tier: 'Low', color: '#6366f1' },
+      { name: 'Resolve', focus: 'IT automation', tier: 'Medium', color: '#f59e0b' },
+    ];
+
+    const ARTICLES = [
+      { title: 'AI Root Cause Analysis for Kubernetes', type: 'Deep Dive', category: 'AI Operations', color: '#2563eb' },
+      { title: 'Automatic Kubernetes Incident Remediation with SafeFix', type: 'Tutorial', category: 'Kubernetes Ops', color: '#7c3aed' },
+      { title: 'Kubegraf vs Komodor: AI-Native SRE vs K8s Ops', type: 'Comparison', category: 'SRE', color: '#059669' },
+      { title: 'CrashLoopBackOff Root Cause Analysis with AI', type: 'Incident Example', category: 'Kubernetes Ops', color: '#dc2626' },
+      { title: 'Prometheus Alert to Auto-Remediation: Complete Guide', type: 'Tutorial', category: 'Monitoring', color: '#d97706' },
+      { title: 'How AI Can Fix Production Incidents in Minutes', type: 'Deep Dive', category: 'AI Operations', color: '#2563eb' },
+    ];
+
+    // ── components ────────────────────────────────────────────────────────────
+    function Navbar() {
+      const [scrolled, setScrolled] = useState(false);
+      const [open, setOpen] = useState(false);
+      useEffect(() => {
+        const fn = () => setScrolled(window.scrollY > 20);
+        window.addEventListener('scroll', fn);
+        return () => window.removeEventListener('scroll', fn);
+      }, []);
+      return (
+        <nav style={{
+          position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
+          background: scrolled ? 'rgba(255,255,255,0.95)' : 'transparent',
+          backdropFilter: scrolled ? 'blur(12px)' : 'none',
+          borderBottom: scrolled ? '1px solid #e2e8f0' : 'none',
+          transition: 'all 0.3s ease',
+          padding: '0 32px',
+        }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 28 }}>🤖</span>
+              <span style={{ fontWeight: 800, fontSize: 18, color: '#0f172a', letterSpacing: '-0.02em' }}>Kubegraf <span style={{ color: '#2563eb' }}>SEO</span></span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+              {NAV_LINKS.map(l => (
+                <a key={l.label} href={l.href} style={{ fontSize: 14, fontWeight: 500, color: '#475569', textDecoration: 'none', transition: 'color 0.2s' }}
+                   onMouseEnter={e => e.target.style.color='#2563eb'} onMouseLeave={e => e.target.style.color='#475569'}>
+                  {l.label}
+                </a>
+              ))}
+              <a href="dashboard/" style={{
+                background: '#2563eb', color: '#fff', padding: '8px 20px', borderRadius: 8,
+                fontSize: 14, fontWeight: 600, textDecoration: 'none', transition: 'background 0.2s',
+              }} onMouseEnter={e => e.target.style.background='#1d4ed8'} onMouseLeave={e => e.target.style.background='#2563eb'}>
+                Dashboard →
+              </a>
+            </div>
+          </div>
+        </nav>
+      );
+    }
+
+    function Hero() {
+      return (
+        <section style={{
+          minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center',
+          justifyContent: 'center', textAlign: 'center', padding: '120px 32px 80px',
+          background: 'linear-gradient(180deg, #eff6ff 0%, #ffffff 60%)',
+          position: 'relative', overflow: 'hidden',
+        }}>
+          {/* background grid */}
+          <div style={{
+            position: 'absolute', inset: 0, zIndex: 0,
+            backgroundImage: 'radial-gradient(circle, #e2e8f0 1px, transparent 1px)',
+            backgroundSize: '32px 32px', opacity: 0.6,
+          }} />
+          {/* glow */}
+          <div style={{
+            position: 'absolute', top: '20%', left: '50%', transform: 'translateX(-50%)',
+            width: 600, height: 400, borderRadius: '50%',
+            background: 'radial-gradient(ellipse, rgba(37,99,235,0.12) 0%, transparent 70%)',
+            zIndex: 0,
+          }} />
+
+          <div style={{ position: 'relative', zIndex: 1, maxWidth: 820, animation: 'fadeUp 0.7s ease forwards' }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              background: '#dbeafe', color: '#1d4ed8', borderRadius: 9999,
+              padding: '6px 16px', fontSize: 13, fontWeight: 600, marginBottom: 28,
+              border: '1px solid #bfdbfe',
+            }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#2563eb', animation: 'pulse-ring 2s infinite', display:'inline-block' }} />
+              Powered by Google Gemini 2.0 · Runs Every Monday
+            </div>
+
+            <h1 style={{
+              fontSize: 'clamp(40px, 7vw, 76px)', fontWeight: 900, lineHeight: 1.08,
+              letterSpacing: '-0.04em', color: '#0f172a', marginBottom: 24,
+            }}>
+              AI-Driven SEO That<br />
+              <span style={{
+                background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              }}>Runs Itself</span>
+            </h1>
+
+            <p style={{ fontSize: 20, color: '#475569', lineHeight: 1.7, maxWidth: 600, margin: '0 auto 40px', fontWeight: 400 }}>
+              Automatically discovers keywords, analyzes 8 competitors, generates technical articles,
+              optimizes for SEO, and publishes to GitHub Pages — <strong style={{color:'#0f172a'}}>zero manual effort.</strong>
+            </p>
+
+            <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 64 }}>
+              <a href="dashboard/" style={{
+                background: '#2563eb', color: '#fff', padding: '14px 32px', borderRadius: 12,
+                fontSize: 16, fontWeight: 700, textDecoration: 'none',
+                boxShadow: '0 4px 24px rgba(37,99,235,0.35)', transition: 'all 0.2s',
+                display: 'flex', alignItems: 'center', gap: 8,
+              }} onMouseEnter={e => { e.currentTarget.style.background='#1d4ed8'; e.currentTarget.style.transform='translateY(-1px)'; }}
+                 onMouseLeave={e => { e.currentTarget.style.background='#2563eb'; e.currentTarget.style.transform='translateY(0)'; }}>
+                📊 View Dashboard
+              </a>
+              <a href="blog/" style={{
+                background: '#fff', color: '#0f172a', padding: '14px 32px', borderRadius: 12,
+                fontSize: 16, fontWeight: 700, textDecoration: 'none',
+                border: '2px solid #e2e8f0', transition: 'all 0.2s',
+                display: 'flex', alignItems: 'center', gap: 8,
+              }} onMouseEnter={e => { e.currentTarget.style.borderColor='#2563eb'; e.currentTarget.style.color='#2563eb'; }}
+                 onMouseLeave={e => { e.currentTarget.style.borderColor='#e2e8f0'; e.currentTarget.style.color='#0f172a'; }}>
+                📝 Read Articles
+              </a>
+              <a href="https://github.com/kubegraf/seo-automation" target="_blank" style={{
+                background: '#0f172a', color: '#fff', padding: '14px 32px', borderRadius: 12,
+                fontSize: 16, fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s',
+                display: 'flex', alignItems: 'center', gap: 8,
+              }} onMouseEnter={e => e.currentTarget.style.background='#1e293b'}
+                 onMouseLeave={e => e.currentTarget.style.background='#0f172a'}>
+                ⭐ GitHub
+              </a>
+            </div>
+
+            {/* Stats */}
+            <div style={{
+              display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1,
+              background: '#e2e8f0', borderRadius: 16, overflow: 'hidden',
+              border: '1px solid #e2e8f0', maxWidth: 640, margin: '0 auto',
+            }}>
+              {STATS.map((s, i) => (
+                <div key={i} style={{ background: '#fff', padding: '20px 16px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 28, fontWeight: 900, color: '#2563eb', letterSpacing: '-0.03em' }}>{s.value}</div>
+                  <div style={{ fontSize: 11, color: '#64748b', fontWeight: 500, marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function Section({ id, children, bg = '#ffffff', style = {} }) {
+      return (
+        <section id={id} style={{ padding: '96px 32px', background: bg, ...style }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+            {children}
+          </div>
+        </section>
+      );
+    }
+
+    function SectionHeader({ badge, title, sub }) {
+      const [ref, visible] = useInView();
+      return (
+        <div ref={ref} style={{
+          textAlign: 'center', marginBottom: 64,
+          opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)',
+          transition: 'all 0.6s ease',
+        }}>
+          {badge && (
+            <span style={{
+              display: 'inline-block', background: '#eff6ff', color: '#2563eb',
+              border: '1px solid #bfdbfe', borderRadius: 9999,
+              padding: '4px 14px', fontSize: 12, fontWeight: 700,
+              textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 16,
+            }}>{badge}</span>
+          )}
+          <h2 style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 800, letterSpacing: '-0.03em', color: '#0f172a', marginBottom: 16 }}>
+            {title}
+          </h2>
+          {sub && <p style={{ fontSize: 18, color: '#64748b', maxWidth: 560, margin: '0 auto', lineHeight: 1.65 }}>{sub}</p>}
+        </div>
+      );
+    }
+
+    function PipelineSection() {
+      return (
+        <Section id="pipeline" bg="#f8fafc">
+          <SectionHeader badge="How It Works" title="7-Stage Automated Pipeline" sub="From keyword discovery to published article — every Monday, automatically." />
+          <div style={{ position: 'relative' }}>
+            {/* connector line */}
+            <div style={{
+              position: 'absolute', left: '50%', top: 40, bottom: 40,
+              width: 2, background: 'linear-gradient(180deg, #2563eb, #7c3aed)',
+              transform: 'translateX(-50%)', opacity: 0.15,
+            }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+              {PIPELINE_STEPS.map((s, i) => {
+                const [ref, visible] = useInView();
+                const left = i % 2 === 0;
+                return (
+                  <div key={i} ref={ref} style={{
+                    display: 'grid', gridTemplateColumns: '1fr 80px 1fr',
+                    alignItems: 'center', gap: 24,
+                    opacity: visible ? 1 : 0,
+                    transform: visible ? 'translateY(0)' : 'translateY(24px)',
+                    transition: `all 0.5s ease ${i * 0.08}s`,
+                  }}>
+                    {/* left content */}
+                    <div style={{ textAlign: 'right', paddingRight: 24, ...(left ? {} : { visibility: 'hidden' }) }}>
+                      {left && <PipelineCard step={s} align="right" />}
+                    </div>
+                    {/* center dot */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                      <div style={{
+                        width: 52, height: 52, borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #2563eb, #7c3aed)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: 22, boxShadow: '0 4px 16px rgba(37,99,235,0.3)',
+                        border: '3px solid #fff',
+                      }}>{s.icon}</div>
+                      <span style={{ fontSize: 10, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.1em' }}>{s.step}</span>
+                    </div>
+                    {/* right content */}
+                    <div style={{ paddingLeft: 24, ...(!left ? {} : { visibility: 'hidden' }) }}>
+                      {!left && <PipelineCard step={s} align="left" />}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </Section>
+      );
+    }
+
+    function PipelineCard({ step, align }) {
+      return (
+        <div style={{
+          background: '#fff', borderRadius: 16, padding: '24px 28px',
+          border: '1px solid #e2e8f0', textAlign: align,
+          boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+          transition: 'box-shadow 0.2s, border-color 0.2s',
+        }}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow='0 8px 32px rgba(37,99,235,0.12)'; e.currentTarget.style.borderColor='#bfdbfe'; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow='0 2px 12px rgba(0,0,0,0.04)'; e.currentTarget.style.borderColor='#e2e8f0'; }}
+        >
+          <h3 style={{ fontSize: 17, fontWeight: 700, color: '#0f172a', marginBottom: 8 }}>{step.title}</h3>
+          <p style={{ fontSize: 14, color: '#64748b', lineHeight: 1.65 }}>{step.desc}</p>
+        </div>
+      );
+    }
+
+    function FeaturesSection() {
+      return (
+        <Section id="features">
+          <SectionHeader badge="Features" title="Everything You Need to Rank" sub="A complete SEO content engine — no SaaS subscription required." />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
+            {FEATURES.map((f, i) => {
+              const [ref, visible] = useInView();
+              return (
+                <div key={i} ref={ref} style={{
+                  background: '#fff', borderRadius: 16, padding: '32px',
+                  border: '1px solid #e2e8f0',
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                  transition: `all 0.5s ease ${i * 0.07}s`,
+                  opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)',
+                  cursor: 'default',
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow='0 8px 32px rgba(37,99,235,0.1)'; e.currentTarget.style.borderColor='#bfdbfe'; e.currentTarget.style.transform='translateY(-2px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow='0 1px 4px rgba(0,0,0,0.04)'; e.currentTarget.style.borderColor='#e2e8f0'; e.currentTarget.style.transform='translateY(0)'; }}
+                >
+                  <div style={{
+                    width: 52, height: 52, borderRadius: 14, background: '#eff6ff',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 26, marginBottom: 20, border: '1px solid #dbeafe',
+                  }}>{f.icon}</div>
+                  <h3 style={{ fontSize: 17, fontWeight: 700, color: '#0f172a', marginBottom: 10 }}>{f.title}</h3>
+                  <p style={{ fontSize: 14, color: '#64748b', lineHeight: 1.65 }}>{f.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </Section>
+      );
+    }
+
+    function CompetitorsSection() {
+      return (
+        <Section id="competitors" bg="#f8fafc">
+          <SectionHeader badge="Competitor Intelligence" title="8 Competitors. Continuously Analyzed." sub="Keyword gaps extracted, comparison articles generated, opportunities ranked — automatically." />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
+            {COMPETITORS.map((c, i) => {
+              const [ref, visible] = useInView();
+              return (
+                <div key={i} ref={ref} style={{
+                  background: '#fff', borderRadius: 14, padding: '24px',
+                  border: '1px solid #e2e8f0',
+                  transition: `all 0.5s ease ${i * 0.06}s`,
+                  opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(16px)',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                    <span style={{ fontWeight: 700, fontSize: 15, color: '#0f172a' }}>{c.name}</span>
+                    <span style={{
+                      fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 9999,
+                      background: c.tier === 'High' ? '#d1fae5' : c.tier === 'Medium' ? '#fef3c7' : '#ede9fe',
+                      color: c.tier === 'High' ? '#059669' : c.tier === 'Medium' ? '#d97706' : '#7c3aed',
+                    }}>{c.tier} Traffic</span>
+                  </div>
+                  <p style={{ fontSize: 13, color: '#64748b' }}>{c.focus}</p>
+                  <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid #f1f5f9', fontSize: 12, color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{ color: '#2563eb' }}>✓</span> Gap keywords extracted
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Section>
+      );
+    }
+
+    function ArticlesSection() {
+      return (
+        <Section id="articles">
+          <SectionHeader badge="Generated Content" title="Articles Kubegraf Publishes" sub="Technical deep-dives, incident examples, tutorials, and competitor comparisons." />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 20 }}>
+            {ARTICLES.map((a, i) => {
+              const [ref, visible] = useInView();
+              return (
+                <div key={i} ref={ref} style={{
+                  background: '#fff', borderRadius: 16, padding: '28px',
+                  border: '1px solid #e2e8f0',
+                  transition: `all 0.5s ease ${i * 0.07}s`,
+                  opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)',
+                  cursor: 'default',
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow='0 8px 32px rgba(0,0,0,0.08)'; e.currentTarget.style.borderColor='#e2e8f0'; e.currentTarget.style.transform='translateY(-2px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow='none'; e.currentTarget.style.borderColor='#e2e8f0'; e.currentTarget.style.transform='translateY(0)'; }}
+                >
+                  <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+                    <span style={{
+                      fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 6,
+                      background: a.color + '15', color: a.color,
+                    }}>{a.type}</span>
+                    <span style={{
+                      fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 6,
+                      background: '#f1f5f9', color: '#475569',
+                    }}>{a.category}</span>
+                  </div>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', lineHeight: 1.4, marginBottom: 16 }}>{a.title}</h3>
+                  <div style={{ display: 'flex', gap: 16, fontSize: 12, color: '#94a3b8' }}>
+                    <span>✍️ 1,500–2,500 words</span>
+                    <span>📊 Schema markup</span>
+                    <span>🔗 Internal links</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ textAlign: 'center', marginTop: 40 }}>
+            <a href="blog/" style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              background: '#fff', color: '#2563eb',
+              border: '2px solid #2563eb', padding: '14px 32px',
+              borderRadius: 12, fontSize: 15, fontWeight: 700, textDecoration: 'none',
+              transition: 'all 0.2s',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.background='#2563eb'; e.currentTarget.style.color='#fff'; }}
+              onMouseLeave={e => { e.currentTarget.style.background='#fff'; e.currentTarget.style.color='#2563eb'; }}
+            >
+              View All Published Articles →
+            </a>
+          </div>
+        </Section>
+      );
+    }
+
+    function CTA() {
+      return (
+        <section style={{
+          padding: '96px 32px',
+          background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%)',
+          textAlign: 'center',
+        }}>
+          <div style={{ maxWidth: 640, margin: '0 auto' }}>
+            <h2 style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 800, color: '#fff', letterSpacing: '-0.03em', marginBottom: 20 }}>
+              Start Growing Organic Traffic Today
+            </h2>
+            <p style={{ fontSize: 18, color: '#bfdbfe', lineHeight: 1.65, marginBottom: 40 }}>
+              Add your Gemini API key, enable GitHub Pages, and the pipeline runs automatically every week.
+            </p>
+            <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+              <a href="dashboard/" style={{
+                background: '#fff', color: '#1e40af', padding: '14px 32px', borderRadius: 12,
+                fontSize: 15, fontWeight: 700, textDecoration: 'none',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
+              }}>📊 Open Dashboard</a>
+              <a href="https://github.com/kubegraf/seo-automation" target="_blank" style={{
+                background: 'rgba(255,255,255,0.15)', color: '#fff',
+                border: '1px solid rgba(255,255,255,0.3)',
+                padding: '14px 32px', borderRadius: 12,
+                fontSize: 15, fontWeight: 700, textDecoration: 'none',
+              }}>⭐ Star on GitHub</a>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function Footer() {
+      return (
+        <footer style={{
+          background: '#0f172a', color: '#94a3b8', padding: '48px 32px',
+          borderTop: '1px solid #1e293b',
+        }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 24 }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                <span style={{ fontSize: 24 }}>🤖</span>
+                <span style={{ fontWeight: 800, fontSize: 16, color: '#f1f5f9' }}>Kubegraf SEO Automation</span>
+              </div>
+              <p style={{ fontSize: 13, color: '#475569' }}>Powered by Google Gemini 2.0 · Deployed on GitHub Pages</p>
+            </div>
+            <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+              {[
+                { label: 'Dashboard', href: 'dashboard/' },
+                { label: 'Blog', href: 'blog/' },
+                { label: 'GitHub', href: 'https://github.com/kubegraf/seo-automation' },
+                { label: 'Pipeline Status', href: 'https://github.com/kubegraf/seo-automation/actions' },
+                { label: 'Kubegraf.io', href: 'https://kubegraf.io' },
+              ].map(l => (
+                <a key={l.label} href={l.href} style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', transition: 'color 0.2s' }}
+                   onMouseEnter={e => e.target.style.color='#60a5fa'} onMouseLeave={e => e.target.style.color='#64748b'}>
+                  {l.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        </footer>
+      );
+    }
+
+    // ── App ───────────────────────────────────────────────────────────────────
+    function App() {
+      return (
+        <>
+          <Navbar />
+          <Hero />
+          <PipelineSection />
+          <FeaturesSection />
+          <CompetitorsSection />
+          <ArticlesSection />
+          <CTA />
+          <Footer />
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
 </body>
 </html>
