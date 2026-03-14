@@ -273,5 +273,60 @@
     "category": "kubernetes_ops",
     "trend": "rising",
     "created_at": "2026-03-14T12:06:50.959663"
+  },
+  {
+    "id": "584ecdfd-427c-49ec-b31a-4f777e34c8c1",
+    "term": "platform engineering kubernetes",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "kubernetes_ops",
+    "trend": "rising",
+    "created_at": "2026-03-14T16:40:38.614945"
+  },
+  {
+    "id": "6a194a3a-1e23-4100-a79a-d1955f24f321",
+    "term": "kubernetes gitops automation",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "kubernetes_ops",
+    "trend": "rising",
+    "created_at": "2026-03-14T16:40:38.614960"
+  },
+  {
+    "id": "6ff3db54-1b68-4ad3-aec8-50afeca64403",
+    "term": "devsecops kubernetes",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "kubernetes_ops",
+    "trend": "rising",
+    "created_at": "2026-03-14T16:40:38.614975"
+  },
+  {
+    "id": "9f4b695d-4823-43de-a557-ff1f1190ea2e",
+    "term": "kubernetes cost optimization",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "kubernetes_ops",
+    "trend": "rising",
+    "created_at": "2026-03-14T16:40:38.614987"
+  },
+  {
+    "id": "591e1d98-94ea-4b5b-846f-ccc2ec8c7b21",
+    "term": "kubernetes security automation",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "kubernetes_ops",
+    "trend": "rising",
+    "created_at": "2026-03-14T16:40:38.615000"
   }
 ]
