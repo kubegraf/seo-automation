@@ -414,6 +414,7 @@ def run():
     console.print(f"Generating {len(topics_to_generate)} new articles...")
 
     generated = []
+    failed = 0
     for idx, topic in enumerate(topics_to_generate):
         try:
             console.print(f"  📝 {topic['title'][:60]}...")
@@ -426,12 +427,20 @@ def run():
                 console.print(f"  ⏳ Waiting 30s before next article...")
                 time.sleep(30)
         except Exception as e:
+            failed += 1
             console.print(f"     [red]✗ Failed: {e}[/red]")
             logger.error(f"Failed to generate article '{topic['title']}': {e}")
 
     # Save all articles
     storage.save_articles(existing_articles)
     console.print(f"\n[green]✅ Generated {len(generated)} articles. Total: {len(existing_articles)}[/green]")
+
+    # Fail the pipeline step if every article failed (so GitHub Actions marks it red)
+    if topics_to_generate and len(generated) == 0:
+        raise RuntimeError(
+            f"Content generation failed — 0/{len(topics_to_generate)} articles generated. "
+            "Check Gemini API quota or rate limits."
+        )
 
     return generated
 

@@ -9,13 +9,11 @@ logger = logging.getLogger(__name__)
 
 _client = None
 
-# Model fallback order — tried in sequence until one works
+# Only models confirmed available for Gemini free-tier API keys (2.0 family)
+# 1.5 models return 404 for this key type
 MODELS = [
     "gemini-2.0-flash-lite",
     "gemini-2.0-flash",
-    "gemini-1.5-flash",
-    "gemini-1.5-flash-8b",
-    "gemini-1.5-pro",
 ]
 
 
@@ -30,11 +28,11 @@ def get_client() -> genai.Client:
 
 
 def _parse_retry_delay(error_str: str) -> float:
-    """Extract 'retry in Xs' hint from a 429 error. Default 60s."""
+    """Extract 'retry in Xs' hint from a 429 error. Default 65s."""
     match = re.search(r"retry in ([\d.]+)s", str(error_str))
     if match:
-        return min(float(match.group(1)) + 3.0, 120.0)
-    return 60.0
+        return min(float(match.group(1)) + 5.0, 130.0)
+    return 65.0
 
 
 def _is_rate_limit(err: str) -> bool:
@@ -47,12 +45,12 @@ def _is_model_not_found(err: str) -> bool:
     return "404" in err or "not found" in err.lower() or "not supported" in err.lower()
 
 
-def _call_with_retry(prompt: str, temperature: float, max_tokens: int, max_retries: int = 4) -> str:
+def _call_with_retry(prompt: str, temperature: float, max_tokens: int, max_retries: int = 6) -> str:
     """
-    Try each model in MODELS list in order.
-    - On 404/not-found: immediately skip to next model.
-    - On 429/rate-limit: wait the retry-after hint, then retry same model.
-    - On other errors: exponential backoff, then skip to next model.
+    Try each model in MODELS list.
+    - 404/not-found  → skip to next model immediately (no wait)
+    - 429/rate-limit → wait the retry-after hint, then retry same model (up to max_retries)
+    - other errors   → exponential backoff, then move to next model
     """
     client = get_client()
     last_error = None
@@ -78,8 +76,8 @@ def _call_with_retry(prompt: str, temperature: float, max_tokens: int, max_retri
                 last_error = e
 
                 if _is_model_not_found(err):
-                    logger.warning(f"Model '{model_name}' not available — trying next.")
-                    break  # move to next model immediately
+                    logger.warning(f"Model '{model_name}' not available — skipping.")
+                    break
 
                 elif _is_rate_limit(err):
                     if attempt < max_retries - 1:
@@ -102,7 +100,7 @@ def _call_with_retry(prompt: str, temperature: float, max_tokens: int, max_retri
                         logger.warning(f"Retries exhausted for '{model_name}' — trying next model.")
                         break
 
-    raise RuntimeError(f"All models failed. Last error: {last_error}")
+    raise RuntimeError(f"All Gemini models failed. Last error: {last_error}")
 
 
 def generate(prompt: str) -> str:
