@@ -70,5 +70,29 @@
       "Create a pillar page targeting 'kubernetes incident management' with cluster content"
     ],
     "created_at": "2026-03-14T13:17:03.472316"
+  },
+  {
+    "id": "f96b870a-44aa-4ffc-acec-6180e42b7874",
+    "week": "2026-W11",
+    "articles_generated": 0,
+    "articles_published": 0,
+    "keywords_discovered": 25,
+    "competitors_analyzed": 8,
+    "top_keywords": [
+      "grafana incident response",
+      "machine learning ops troubleshooting",
+      "ai incident investigation",
+      "prometheus alert automation",
+      "kubernetes observability ai"
+    ],
+    "top_articles": [],
+    "recommendations": [
+      "Improve internal linking between comparison articles",
+      "Create articles targeting competitor gap keywords: deductive ai alternative, kubegraf vs deductive ai, rootly alternative",
+      "Add FAQ schema markup to tutorial articles for featured snippets",
+      "Increase article word count for low-SEO-score articles to 2000+ words",
+      "Create a pillar page targeting 'kubernetes incident management' with cluster content"
+    ],
+    "created_at": "2026-03-14T13:47:03.344601"
   }
 ]
