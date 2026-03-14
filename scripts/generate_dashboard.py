@@ -26,8 +26,7 @@ DASHBOARD_HTML = '''<!DOCTYPE html>
 
         /* Navbar */
         .navbar {{ background: #fff; border-bottom: 1px solid #e2e8f0; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 64px; position: sticky; top: 0; z-index: 50; }}
-        .navbar-brand {{ display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; color: #1e293b; text-decoration: none; }}
-        .navbar-brand span {{ color: #2563eb; }}
+        .navbar-brand {{ display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; color: #2563eb; text-decoration: none; letter-spacing: -0.01em; }}
         .navbar-links {{ display: flex; align-items: center; gap: 8px; }}
         .navbar-links a {{ font-size: 14px; font-weight: 500; color: #64748b; text-decoration: none; padding: 8px 14px; border-radius: 8px; transition: all 0.15s; }}
         .navbar-links a:hover {{ color: #2563eb; background: #eff6ff; }}
@@ -104,7 +103,7 @@ DASHBOARD_HTML = '''<!DOCTYPE html>
 </head>
 <body>
     <nav class="navbar">
-        <a href="../" class="navbar-brand">Kube<span>graf</span></a>
+        <a href="../" class="navbar-brand">Kubegraf</a>
         <div class="navbar-links">
             <a href="../">Home</a>
             <a href="../blog/">Blog</a>
