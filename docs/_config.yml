@@ -1,0 +1,38 @@
+title: Kubegraf Engineering Blog
+description: "Deep technical content on Kubernetes operations, AI-driven SRE, and incident automation."
+baseurl: ""
+url: "https://kubegraf.github.io"
+
+theme: minima
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+defaults:
+  - scope:
+      path: "blog"
+      type: "pages"
+    values:
+      layout: "post"
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/
+  - dashboard/
+
+sass:
+  style: compressed
+
+collections:
+  blog:
+    output: true
+    permalink: /blog/:name/

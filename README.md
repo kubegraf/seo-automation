@@ -1,457 +1,225 @@
-# Kubegraf SEO Automation Platform
+# Kubegraf SEO Automation
 
-An AI-driven, production-grade SEO automation system that automatically discovers keywords, analyzes competitors, generates high-quality technical articles, optimizes for search engines, and publishes to GitHub Pages — all without human intervention.
+> AI-driven SEO automation system that automatically grows Kubegraf's developer adoption by generating and publishing highly optimized technical content — **100% serverless, zero infrastructure required**.
 
-## Architecture Overview
+[![SEO Pipeline](https://github.com/kubegraf/seo-automation/actions/workflows/seo-pipeline.yml/badge.svg)](https://github.com/kubegraf/seo-automation/actions/workflows/seo-pipeline.yml)
+[![GitHub Pages](https://github.com/kubegraf/seo-automation/actions/workflows/pages.yml/badge.svg)](https://github.com/kubegraf/seo-automation/actions/workflows/pages.yml)
+
+## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                     SEO Automation Pipeline                                  │
-│                                                                               │
-│  ┌─────────┐    ┌───────────┐    ┌──────────┐    ┌──────────┐              │
-│  │Scheduler│───>│  Keyword  │───>│Competitor│───>│ Content  │              │
-│  │(Celery) │    │Discovery  │    │Analysis  │    │Generation│              │
-│  └─────────┘    └───────────┘    └──────────┘    └──────────┘              │
-│                                                          │                   │
-│  ┌───────────┐    ┌──────────┐    ┌──────────┐         │                   │
-│  │  Analytics │<──│Publishing│<──│   SEO    │<────────┘                   │
-│  │            │    │          │    │Optimizer │                             │
-│  └───────────┘    └──────────┘    └──────────┘                             │
-│                                                                               │
-│  ┌─────────────────────────────────────────────┐                            │
-│  │         Streamlit Dashboard (Port 8501)      │                            │
-│  └─────────────────────────────────────────────┘                            │
-│                                                                               │
-│  Infrastructure: PostgreSQL + Redis + Celery Beat                            │
-└─────────────────────────────────────────────────────────────────────────────┘
+GitHub Actions (Weekly Cron)
+         │
+         ▼
+┌─────────────────┐
+│ Keyword Discovery│  ← Gemini AI discovers 25+ trending keywords/run
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────────┐
+│ Competitor Analysis │  ← Analyzes 8 competitors, finds keyword gaps
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Content Generation  │  ← Gemini AI generates full articles (1500-2500 words)
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│  SEO Optimization   │  ← Scores, adds schema markup, optimizes headings
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│     Publishing      │  ← Writes markdown to docs/blog/, updates index
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│   SEO Analytics     │  ← Tracks rankings, generates weekly report
+└──────────┬──────────┘
+           │
+           ▼
+    GitHub Pages Blog
+    Static Dashboard
 ```
 
-## Pipeline Data Flow
+**Data flow:** Gemini API → JSON files in `data/` → Markdown in `docs/blog/` → GitHub Pages
 
-```mermaid
-graph TD
-    A[Celery Beat Scheduler] -->|Weekly trigger| B[Keyword Discovery]
-    B -->|Trending K8s/SRE/DevOps keywords| C[Competitor Analysis]
-    C -->|Keyword gaps + article ideas| D[Content Generation]
-    D -->|Raw article drafts via Claude AI| E[SEO Optimization]
-    E -->|Optimized articles with schema| F[Publishing]
-    F -->|Committed to GitHub Pages| G[SEO Analytics]
-    G -->|Rankings + opportunities| A
+## Key Design Principles
 
-    H[(PostgreSQL)] --- B
-    H --- C
-    H --- D
-    H --- E
-    H --- F
-    H --- G
+- **Zero infrastructure** — No database, no server, no Docker required
+- **Git as database** — JSON files in `data/` committed after each step
+- **GitHub Actions as scheduler** — Runs every Monday at 02:00 UTC automatically
+- **GitHub Pages as blog** — Published articles served as static site
+- **Gemini AI** — Google Gemini 2.0 Flash for all content generation
 
-    I[(Redis)] --- A
-    I --- B
-    I --- C
-    I --- D
+## Competitors Analyzed
 
-    J[Streamlit Dashboard] --- H
-    J --- I
-```
+| Competitor | Domain | Traffic Tier | Focus |
+|------------|--------|-------------|-------|
+| Komodor | komodor.com | Medium | Kubernetes troubleshooting |
+| Rootly | rootly.com | High | Incident management |
+| Deductive AI | deductive.ai | Low | AI incident analysis |
+| Incident.io | incident.io | High | Incident management platform |
+| Harness | harness.io | High | CI/CD + DevOps platform |
+| Dash0 | dash0.com | Low | K8s observability |
+| SRE.ai | sre.ai | Low | AI SRE platform |
+| Resolve Systems | resolve.io | Medium | IT automation |
 
-## Services
+## Article Types Generated
 
-| Service | Port | Description |
-|---------|------|-------------|
-| Scheduler | 8000 | Celery-based pipeline orchestration |
-| Keyword Discovery | 8001 | Trending keyword research and scoring |
-| Competitor Analysis | 8002 | Competitor keyword gap analysis |
-| Content Generation | 8003 | AI article generation via Anthropic Claude |
-| SEO Optimization | 8004 | Article optimization and scoring |
-| Publishing | 8005 | GitHub Pages publishing via GitHub API |
-| Backlink Automation | 8006 | Backlink opportunity identification |
-| SEO Analytics | 8007 | Rankings tracking and reporting |
-| Dashboard | 8501 | Streamlit monitoring dashboard |
-
-## Target Competitors Tracked
-
-| Competitor | Domain | Category |
-|------------|--------|----------|
-| Deductive AI | deductive.ai | AI Incident Management |
-| Rootly | rootly.com | Incident Management |
-| SRE.ai | sre.ai | AI SRE Platform |
-| Resolve Systems | resolve.io | IT Automation |
-| Incident.io | incident.io | Incident Management |
-| Komodor | komodor.com | Kubernetes Ops |
-| Dash0 | dash0.com | Observability |
-| Harness | harness.io | DevOps Platform |
+| Type | Description | Example |
+|------|-------------|---------|
+| `deep_dive` | Comprehensive technical analysis | "AI Root Cause Analysis for Kubernetes" |
+| `tutorial` | Step-by-step guide with code | "Prometheus Alert to Auto-Remediation" |
+| `comparison` | Competitor comparison | "Kubegraf vs Komodor: Which Platform..." |
+| `incident_example` | Real-world K8s incident walkthrough | "CrashLoopBackOff Root Cause Analysis" |
 
 ## Quick Start
 
-### Prerequisites
+### 1. Prerequisites
 
-- Docker and Docker Compose
-- Python 3.11+ (for local development)
-- Anthropic API key (for content generation)
-- GitHub Token (for publishing)
+- Python 3.11+
+- Google Gemini API key ([get one free](https://aistudio.google.com/app/apikey))
 
-### 1. Clone and Configure
+### 2. Local Setup
 
 ```bash
-git clone https://github.com/kubegraf/seo-automation
+git clone https://github.com/kubegraf/seo-automation.git
 cd seo-automation
-
-# Copy and configure environment variables
+pip install -r requirements.txt
 cp .env.example .env
-# Edit .env with your API keys
+# Edit .env and add your GEMINI_API_KEY
 ```
 
-### 2. Start with Docker Compose
+### 3. Run the Full Pipeline
 
 ```bash
-# Start all services
-make start
+# Source your env
+export GEMINI_API_KEY=your_key_here
+export PYTHONPATH=.
 
-# Check status
-make status
+# Full pipeline
+make run-pipeline
 
-# View logs
-make logs
+# Or individual steps:
+make run-keyword       # Discover keywords
+make run-competitors   # Analyze competitors
+make run-content       # Generate articles (default: 3)
+make run-optimize      # Optimize for SEO
+make run-publish       # Publish to docs/blog/
+make run-analytics     # Generate SEO report
+make dashboard         # Generate HTML dashboard
 ```
 
-The dashboard will be available at http://localhost:8501
+### 4. GitHub Actions Setup (Automatic)
 
-### 3. Run Database Migrations
+1. Fork/clone this repository
+2. Go to **Settings → Secrets and Variables → Actions**
+3. Add secret: `GEMINI_API_KEY` = your Gemini API key
+4. Go to **Settings → Pages** → Source: **GitHub Actions**
+5. Enable **Actions** in repository settings
 
+The pipeline will run automatically every Monday at 02:00 UTC.
+
+**Trigger manually:**
 ```bash
-make migrate
+# Full pipeline
+gh workflow run seo-pipeline.yml
+
+# Specific step
+gh workflow run seo-pipeline.yml -f step=content_generation -f articles_per_run=5
 ```
 
-### 4. Trigger the Pipeline
+## Project Structure
 
-```bash
-# Run full pipeline
-make pipeline
-
-# Or trigger individual steps
-make pipeline-keywords
-make pipeline-competitors
-make pipeline-content
+```
+seo-automation/
+├── pipeline/               # Core pipeline steps (each is a standalone Python module)
+│   ├── keyword_discovery.py    # Discovers 25+ keywords/run using Gemini
+│   ├── competitor_analysis.py  # Analyzes 8 competitors, finds gaps
+│   ├── content_generation.py   # Generates full articles with Gemini
+│   ├── seo_optimization.py     # Scores & optimizes articles
+│   ├── publishing.py           # Writes markdown to docs/blog/
+│   ├── backlink_automation.py  # Identifies backlink opportunities
+│   └── seo_analytics.py        # Rankings & weekly reports
+│
+├── shared/                 # Shared utilities
+│   ├── gemini_client.py        # Google Gemini API wrapper (retry logic)
+│   ├── storage.py              # JSON file-based storage (no DB needed)
+│   └── models.py               # Pydantic v2 data models
+│
+├── scripts/                # Runner scripts
+│   ├── run_pipeline.py         # Full pipeline orchestrator
+│   ├── run_step.py             # Single step runner (used by GH Actions)
+│   └── generate_dashboard.py  # Static HTML dashboard generator
+│
+├── data/                   # JSON data store (committed to Git)
+│   ├── articles.json           # All generated articles
+│   ├── keywords.json           # Discovered keywords with scores
+│   ├── competitors.json        # Competitor analysis results
+│   └── seo_reports.json        # Weekly SEO reports
+│
+├── docs/                   # GitHub Pages site
+│   ├── blog/                   # Published article markdown files
+│   ├── dashboard/index.html    # Auto-generated SEO dashboard
+│   ├── index.md                # Homepage
+│   └── _config.yml             # Jekyll config
+│
+└── .github/workflows/
+    ├── seo-pipeline.yml        # Main weekly pipeline (7 jobs)
+    └── pages.yml               # GitHub Pages deployment
 ```
 
-## Docker Compose Setup
+## Dashboard
 
-```bash
-# Start all services
-docker compose up -d
+After running the pipeline, a static HTML dashboard is generated at `docs/dashboard/index.html` and deployed to GitHub Pages.
 
-# Scale content generation (handles LLM API calls)
-docker compose up -d --scale content-generation=3
-
-# View specific service logs
-docker compose logs -f content-generation
-
-# Stop everything
-docker compose down
-```
-
-## Kubernetes Deployment
-
-### Using Helm
-
-```bash
-# Add credentials
-helm upgrade --install seo-automation ./helm/seo-automation \
-  --namespace seo-automation \
-  --create-namespace \
-  --set secrets.ANTHROPIC_API_KEY="your-key" \
-  --set secrets.GITHUB_TOKEN="your-token" \
-  --set secrets.DATABASE_URL="postgresql+asyncpg://..." \
-  --wait
-
-# Run migrations
-kubectl exec -n seo-automation deployment/scheduler -- \
-  alembic -c /app/migrations/alembic.ini upgrade head
-```
-
-### Using Raw Manifests
-
-```bash
-kubectl apply -f k8s/namespace.yaml
-kubectl apply -f k8s/configmap.yaml
-# Edit k8s/secret.yaml with actual values, then:
-kubectl apply -f k8s/secret.yaml
-kubectl apply -f k8s/postgres.yaml
-kubectl apply -f k8s/redis.yaml
-kubectl apply -f k8s/ingress.yaml
-```
+The dashboard shows:
+- **Articles tab** — All articles with SEO scores, word counts, status
+- **Keywords tab** — Top keyword opportunities with trend indicators
+- **Competitors tab** — Competitor analysis with gap keyword tags
+- **Analytics tab** — SEO recommendations and weekly reports
 
 ## Environment Variables
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `ANTHROPIC_API_KEY` | Yes | Claude API key for content generation |
-| `DATABASE_URL` | Yes | PostgreSQL connection URL |
-| `REDIS_URL` | Yes | Redis connection URL |
-| `GITHUB_TOKEN` | Yes | GitHub token for publishing |
-| `GITHUB_REPO_OWNER` | Yes | GitHub org/user for content repo |
-| `GITHUB_REPO_NAME` | Yes | GitHub repo name for content |
-| `SERPAPI_KEY` | No | SerpAPI key for live keyword data |
-| `OPENAI_API_KEY` | No | OpenAI fallback for content generation |
-| `SITE_URL` | No | Published site URL (default: https://kubegraf.com) |
+| `GEMINI_API_KEY` | Yes | Google Gemini API key |
+| `ARTICLES_PER_RUN` | No | Articles to generate per run (default: 3) |
+| `KEYWORDS_PER_RUN` | No | Keywords to discover per run (default: 25) |
+| `PIPELINE_STEP` | No | Run specific step only (default: all) |
 
-See `.env.example` for the complete list.
+## SEO Article Structure
 
-## API Documentation
+Every generated article includes:
 
-### Scheduler Service (Port 8000)
+- SEO-optimized title (primary keyword in title)
+- Meta description (140-160 chars, includes keyword)
+- Jekyll/Hugo frontmatter
+- H1-H4 heading hierarchy
+- Mermaid architecture diagram
+- Code blocks (YAML, bash, JSON)
+- Comparison tables
+- Internal links to related articles
+- JSON-LD schema markup (TechArticle)
+- Call to action
 
-```bash
-# Trigger full pipeline
-POST /trigger/full-pipeline
+## How the Competitor Analysis Works
 
-# Trigger individual steps
-POST /trigger/keyword-discovery
-POST /trigger/competitor-analysis
-POST /trigger/content-generation
-POST /trigger/seo-optimization
-POST /trigger/publishing
+For each competitor, Gemini analyzes:
+1. Their focus areas and known keywords
+2. What keyword gaps Kubegraf can target
+3. Where Kubegraf has unique advantages (AI-native K8s RCA + SafeFix)
+4. Specific comparison article ideas
 
-# Get task status
-GET /tasks/{task_id}
-
-# List scheduled tasks
-GET /scheduled-tasks
-```
-
-### Keyword Discovery (Port 8001)
-
-```bash
-# Discover keywords
-POST /discover
-{
-  "min_search_volume": 100,
-  "max_difficulty": 75,
-  "count": 50
-}
-
-# Analyze specific keyword
-POST /analyze/{keyword}
-
-# List all keywords
-GET /keywords?min_score=50&limit=100
-
-# Get seed keywords
-GET /seeds
-```
-
-### Competitor Analysis (Port 8002)
-
-```bash
-# Analyze competitor
-POST /analyze
-{ "competitor_name": "Komodor" }
-
-# Get keyword gaps
-GET /gaps
-
-# Get content calendar
-GET /calendar?weeks=4
-
-# Get article ideas for competitor
-GET /article-ideas/Komodor
-```
-
-### Content Generation (Port 8003)
-
-```bash
-# Generate article
-POST /generate
-{
-  "topic": "Kubernetes OOMKilled Fix",
-  "keywords": ["kubernetes oomkilled", "oomkilled fix"],
-  "article_type": "tutorial",
-  "word_count": 2000
-}
-
-# Generate comparison article
-POST /generate/comparison
-{
-  "competitor_name": "Komodor",
-  "competitor_domain": "komodor.com"
-}
-
-# Generate tutorial
-POST /generate/tutorial
-{
-  "topic": "Setting up Kubegraf",
-  "steps": ["Install", "Configure", "Test"],
-  "primary_keyword": "kubegraf setup"
-}
-
-# List generated articles
-GET /articles?status=generated&limit=20
-```
-
-### SEO Optimization (Port 8004)
-
-```bash
-# Optimize specific article
-POST /optimize/{article_id}
-
-# Calculate SEO score
-POST /score
-{ "title": "...", "content": "...", "primary_keyword": "..." }
-```
-
-### SEO Analytics (Port 8007)
-
-```bash
-# Get rankings
-GET /rankings
-
-# Get keyword history
-GET /rankings/{keyword}?days=30
-
-# Get weekly report
-GET /report
-
-# Get opportunities
-GET /opportunities
-
-# Get traffic estimates
-GET /traffic
-```
-
-## Dashboard
-
-The Streamlit dashboard (http://localhost:8501) provides 4 tabs:
-
-### Articles Tab
-- Table of all generated articles with status, word count, SEO score
-- Filter by status and minimum SEO score
-- Sortable by creation date, SEO score, word count, or clicks
-- Article detail view with published URL
-
-### Keywords Tab
-- Keyword rankings table with trend indicators (📈📉➡️)
-- Search and filter functionality
-- Opportunity score visualization
-- Position tracking with change indicators
-
-### Competitors Tab
-- Competitor cards with traffic estimates and domain authority
-- Keyword gap lists per competitor
-- One-click competitor analysis trigger
-- One-click comparison article generation
-- Keyword gap bar chart
-
-### Analytics Tab
-- Organic traffic trend line charts (30-day view)
-- Top performing articles table
-- SEO opportunity recommendations
-- Weekly report summary
-
-## Example Article Topics
-
-The system auto-generates articles on these topics:
-
-1. "AI Root Cause Analysis for Kubernetes: How Kubegraf Automates Incident Investigation"
-2. "Automatic Kubernetes Incident Remediation with SafeFix"
-3. "AI SRE Platforms Comparison 2024: Kubegraf vs Komodor vs Deductive AI"
-4. "How AI Can Fix Production Kubernetes Incidents in Minutes"
-5. "Kubernetes Troubleshooting Automation: From Alert to Fix"
-6. "Kubegraf vs Rootly: Which Incident Management Platform is Right for You?"
-7. "Kubernetes OOMKilled: Automatic Detection and Remediation"
-8. "CrashLoopBackOff Root Cause Analysis with AI"
-9. "Prometheus Alert to Auto-Remediation: The Complete Guide"
-10. "Building a Kubernetes AI SRE Stack"
-
-## Competitor Analysis Summary
-
-The platform tracks and creates content to compete with 8 primary competitors:
-
-- **Komodor** (komodor.com) - Kubernetes change intelligence platform. Our advantage: AI-powered root cause analysis vs their manual debugging approach.
-- **Incident.io** (incident.io) - Incident management platform. Our advantage: Kubernetes-native vs generic incident tooling.
-- **Rootly** (rootly.com) - Slack-native incident management. Our advantage: Automated remediation (SafeFix) vs manual runbooks.
-- **Deductive AI** (deductive.ai) - AI incident analysis. Our advantage: Full platform including remediation vs analysis-only.
-- **Dash0** (dash0.com) - OpenTelemetry platform. Our advantage: AI-powered insights vs raw observability data.
-
-## Makefile Commands
-
-```bash
-make help          # Show all available commands
-make start         # Start all services
-make stop          # Stop all services
-make build         # Build Docker images
-make push          # Push images to registry
-make deploy        # Deploy to Kubernetes via Helm
-make migrate       # Run database migrations
-make test          # Run test suite
-make lint          # Run linters
-make format        # Auto-format code
-make health        # Check all service health
-make pipeline      # Trigger full pipeline
-make status        # Show Docker Compose status
-```
-
-## Scheduled Jobs
-
-| Schedule | Task |
-|----------|------|
-| Monday 2 AM UTC | Full pipeline (keyword → competitor → content → publish) |
-| Daily 4 AM UTC | Keyword discovery update |
-| Daily 6 AM UTC | Rankings check |
-| Sunday midnight UTC | Competitor analysis refresh |
-
-## CI/CD Workflows
-
-### seo-pipeline.yml
-Runs weekly (Monday 2 AM UTC) or on manual dispatch:
-1. Keyword Discovery → saves artifact
-2. Competitor Analysis → (depends on keywords)
-3. Content Generation → (depends on competitors)
-4. SEO Optimization → (depends on content)
-5. Publishing → (depends on optimization)
-6. Analytics Update → always runs
-
-### deploy.yml
-Triggers on push to main:
-1. Detect changed services
-2. Build changed Docker images in parallel
-3. Run test suite
-4. Deploy to Kubernetes via Helm
-5. Run database migrations
-6. Smoke test verification
-
-## Development
-
-```bash
-# Install all dependencies
-make install
-
-# Run tests
-make test
-
-# Lint code
-make lint
-
-# Format code
-make format
-
-# Open PostgreSQL shell
-make shell-db
-
-# Open scheduler container shell
-make shell-scheduler
-```
-
-## Architecture Decisions
-
-- **Python 3.11** with async/await throughout for performance
-- **FastAPI** for all services — fast, type-safe, auto-documented
-- **Celery + Redis** for distributed task scheduling
-- **SQLAlchemy 2.0 async** for database operations
-- **Anthropic Claude** as primary LLM for high-quality technical content
-- **Pydantic v2** for data validation
-- **httpx** for async HTTP client
-- **Streamlit** for rapid dashboard development
+The system then generates head-to-head comparison articles that:
+- Honestly assess both platforms
+- Highlight Kubegraf's AI-driven auto-remediation as differentiator
+- Target keywords like "kubegraf vs komodor", "komodor alternative", etc.
 
 ## License
 
-Copyright 2024 Kubegraf. All rights reserved.
+MIT

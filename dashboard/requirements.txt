@@ -1,9 +1,0 @@
-streamlit==1.31.0
-pandas==2.2.0
-httpx==0.26.0
-sqlalchemy[asyncio]==2.0.25
-asyncpg==0.29.0
-redis==5.0.1
-python-dotenv==1.0.0
-altair==5.2.0
-plotly==5.18.0
