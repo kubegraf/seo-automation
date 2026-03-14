@@ -4,6 +4,7 @@ Uses Gemini to generate high-quality SEO-optimized articles.
 """
 import json
 import os
+import time
 import logging
 from datetime import datetime
 from slugify import slugify
@@ -413,13 +414,17 @@ def run():
     console.print(f"Generating {len(topics_to_generate)} new articles...")
 
     generated = []
-    for topic in topics_to_generate:
+    for idx, topic in enumerate(topics_to_generate):
         try:
             console.print(f"  📝 {topic['title'][:60]}...")
             article = generate_article(topic, existing_articles)
             existing_articles.append(article)
             generated.append(article)
             console.print(f"     [green]✓ {article.word_count} words, SEO score pending[/green]")
+            # Pause between articles to respect Gemini free-tier rate limits
+            if idx < len(topics_to_generate) - 1:
+                console.print(f"  ⏳ Waiting 30s before next article...")
+                time.sleep(30)
         except Exception as e:
             console.print(f"     [red]✗ Failed: {e}[/red]")
             logger.error(f"Failed to generate article '{topic['title']}': {e}")

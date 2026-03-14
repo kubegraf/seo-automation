@@ -3,6 +3,7 @@ Competitor Analysis Engine
 Analyzes 8 competitors, identifies keyword gaps, generates comparison article ideas.
 """
 import json
+import time
 import logging
 from datetime import datetime
 from shared.gemini_client import generate_json, generate
@@ -155,12 +156,18 @@ def run():
             existing.append(comp)
 
     # Analyze each competitor (or re-analyze if not done recently)
+    # Limit to 3 per run to stay within free-tier rate limits
     analyzed = 0
+    max_per_run = 3
     for i, competitor in enumerate(existing):
-        if not competitor.last_analyzed:
+        if not competitor.last_analyzed and analyzed < max_per_run:
             console.print(f"  Analyzing {competitor.name}...")
             existing[i] = analyze_competitor(competitor)
             analyzed += 1
+            # Pause between competitor calls to avoid rate limits
+            if analyzed < max_per_run:
+                console.print(f"  ⏳ Waiting 15s before next competitor analysis...")
+                time.sleep(15)
 
     # Save
     storage.save_competitors(existing)
