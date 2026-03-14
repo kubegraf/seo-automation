@@ -1,1 +1,277 @@
-[]
+[
+  {
+    "id": "827311db-6b64-44d7-81e7-6907997a2308",
+    "term": "kubernetes root cause analysis",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "kubernetes_ops",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959352"
+  },
+  {
+    "id": "97b65d77-2545-4256-8a3d-d786db5a8088",
+    "term": "kubernetes incident remediation",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "kubernetes_ops",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959392"
+  },
+  {
+    "id": "b54b1dde-a68f-4e69-8cba-0afceadfa849",
+    "term": "kubernetes troubleshooting automation",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "kubernetes_ops",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959406"
+  },
+  {
+    "id": "3c7ae15a-5bf2-4db9-947d-bcb0d8de79e8",
+    "term": "kubernetes alert management",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "kubernetes_ops",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959421"
+  },
+  {
+    "id": "0ee19e0b-8125-4386-b4fd-074198bba2d5",
+    "term": "kubernetes crashloopbackoff fix",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "kubernetes_ops",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959432"
+  },
+  {
+    "id": "1cb6a0ee-d358-4337-8cdb-b8718799105e",
+    "term": "kubernetes oomkilled remediation",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "kubernetes_ops",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959441"
+  },
+  {
+    "id": "6b5c1f45-0e66-4f74-8278-11c09db4602f",
+    "term": "kubernetes pod restart loop",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "kubernetes_ops",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959450"
+  },
+  {
+    "id": "e6839df8-1d29-41c6-983d-f29d533ce597",
+    "term": "kubernetes deployment rollback automation",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "kubernetes_ops",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959486"
+  },
+  {
+    "id": "ec910624-1efd-4bf3-9a2b-9f40e84838d4",
+    "term": "sre automation platform",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "sre",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959499"
+  },
+  {
+    "id": "66e42ef9-f9cd-4a41-a1c7-77463534488a",
+    "term": "ai sre platform",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "sre",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959513"
+  },
+  {
+    "id": "6327e3ee-3ed0-4077-a320-acbec93eb694",
+    "term": "site reliability engineering ai",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "sre",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959523"
+  },
+  {
+    "id": "b7e2d1e8-8982-4124-b08d-2d3e82d9e8b4",
+    "term": "incident response automation",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "sre",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959532"
+  },
+  {
+    "id": "19e26292-344d-4716-a748-a639f4dbf71d",
+    "term": "automated incident remediation",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "sre",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959546"
+  },
+  {
+    "id": "96017a12-04cd-412c-ada8-b06704ee57fd",
+    "term": "on-call automation",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "sre",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959558"
+  },
+  {
+    "id": "b39b6b54-429c-4ae1-a0e3-f71aaf526430",
+    "term": "runbook automation",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "sre",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959567"
+  },
+  {
+    "id": "fa8b8768-9c63-4707-81fc-a9a123bee713",
+    "term": "ai root cause analysis",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "ai_operations",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959576"
+  },
+  {
+    "id": "292d6497-8b66-4c20-a85c-7dbb3754952d",
+    "term": "ai incident investigation",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "sre",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959587"
+  },
+  {
+    "id": "a553b7d2-06d2-4560-82de-b5578b4c7564",
+    "term": "machine learning ops troubleshooting",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "ai_operations",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959600"
+  },
+  {
+    "id": "5d70d088-9caf-4926-adf5-3bcf4a4a3d32",
+    "term": "llm ops kubernetes",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "kubernetes_ops",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959609"
+  },
+  {
+    "id": "989e2621-c87e-4f9b-ab01-b1a7ac24ca8d",
+    "term": "ai devops platform",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "ai_operations",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959618"
+  },
+  {
+    "id": "fd30c10b-fe6b-4035-9145-4fe478c320bc",
+    "term": "prometheus alert automation",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "monitoring",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959628"
+  },
+  {
+    "id": "273d88b5-4627-4305-8981-f7a0e72c6e65",
+    "term": "grafana incident response",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "sre",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959637"
+  },
+  {
+    "id": "10006412-d0e2-4938-80dc-ff8ffd9d97f7",
+    "term": "kubernetes observability ai",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "kubernetes_ops",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959644"
+  },
+  {
+    "id": "a950ef32-b69a-4a7a-a875-491bd8b2a7f7",
+    "term": "opentelemetry kubernetes",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "kubernetes_ops",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959652"
+  },
+  {
+    "id": "770261bf-3d76-4c94-9c01-ebab2e2584dd",
+    "term": "distributed tracing kubernetes",
+    "search_volume_estimate": "medium",
+    "difficulty": "medium",
+    "opportunity_score": 0.7,
+    "competitor_ranking": null,
+    "category": "kubernetes_ops",
+    "trend": "rising",
+    "created_at": "2026-03-14T12:06:50.959663"
+  }
+]
