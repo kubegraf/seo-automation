@@ -103,7 +103,7 @@ DASHBOARD_HTML = '''<!DOCTYPE html>
 </head>
 <body>
     <nav class="navbar">
-        <a href="../" class="navbar-brand">Kubegraf</a>
+        <a href="../" style="font-size:18px;font-weight:700;color:#2563eb;text-decoration:none;white-space:nowrap;letter-spacing:-0.01em;">Kubegraf</a>
         <div class="navbar-links">
             <a href="../">Home</a>
             <a href="../blog/">Blog</a>
