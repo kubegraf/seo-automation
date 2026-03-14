@@ -1,0 +1,434 @@
+name: SEO Automation Pipeline
+
+on:
+  schedule:
+    # Every Monday at 2 AM UTC
+    - cron: "0 2 * * 1"
+  workflow_dispatch:
+    inputs:
+      max_articles:
+        description: "Maximum number of articles to generate"
+        required: false
+        default: "5"
+        type: string
+      run_keywords:
+        description: "Run keyword discovery"
+        required: false
+        default: true
+        type: boolean
+      run_competitors:
+        description: "Run competitor analysis"
+        required: false
+        default: true
+        type: boolean
+      run_content:
+        description: "Run content generation"
+        required: false
+        default: true
+        type: boolean
+
+env:
+  PYTHON_VERSION: "3.11"
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  REDIS_URL: ${{ secrets.REDIS_URL }}
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+  SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_REPO_OWNER: ${{ secrets.CONTENT_REPO_OWNER }}
+  GITHUB_REPO_NAME: ${{ secrets.CONTENT_REPO_NAME }}
+
+jobs:
+  # ==========================================================================
+  # 1. Keyword Discovery
+  # ==========================================================================
+  keyword-discovery:
+    name: Keyword Discovery
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.run_keywords != 'false' }}
+    outputs:
+      keywords_found: ${{ steps.discover.outputs.keywords_found }}
+      run_id: ${{ steps.discover.outputs.run_id }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install -r services/keyword_discovery/requirements.txt
+
+      - name: Run keyword discovery
+        id: discover
+        run: |
+          python -c "
+          import asyncio
+          import sys
+          import os
+          sys.path.insert(0, '.')
+
+          async def run():
+              from services.keyword_discovery.engine import KeywordDiscoveryEngine
+              engine = KeywordDiscoveryEngine()
+              keywords = await engine.discover_and_score_all()
+              print(f'Found {len(keywords)} keywords')
+
+              # Save to file for artifact
+              import json
+              with open('keywords_output.json', 'w') as f:
+                  json.dump(keywords, f, indent=2)
+
+              # Output for next job
+              print(f'::set-output name=keywords_found::{len(keywords)}')
+              print(f'::set-output name=run_id::kd-{os.getpid()}')
+              await engine.close()
+
+          asyncio.run(run())
+          "
+
+      - name: Upload keywords artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: keywords-${{ github.run_id }}
+          path: keywords_output.json
+          retention-days: 7
+
+  # ==========================================================================
+  # 2. Competitor Analysis
+  # ==========================================================================
+  competitor-analysis:
+    name: Competitor Analysis
+    runs-on: ubuntu-latest
+    needs: keyword-discovery
+    if: ${{ github.event.inputs.run_competitors != 'false' && always() }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install -r services/competitor_analysis/requirements.txt
+
+      - name: Download keywords artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: keywords-${{ github.run_id }}
+        continue-on-error: true
+
+      - name: Run competitor analysis
+        run: |
+          python -c "
+          import asyncio
+          import sys
+          import json
+          sys.path.insert(0, '.')
+
+          async def run():
+              from services.competitor_analysis.engine import CompetitorAnalysisEngine
+              engine = CompetitorAnalysisEngine()
+              results = await engine.analyze_all_competitors()
+
+              with open('competitor_output.json', 'w') as f:
+                  json.dump(results, f, indent=2)
+
+              print(f'Analyzed {len(results)} competitors')
+              for r in results:
+                  print(f'  - {r[\"competitor_name\"]}: {len(r[\"gap_keywords\"])} gap keywords')
+
+          asyncio.run(run())
+          "
+
+      - name: Upload competitor analysis artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: competitor-analysis-${{ github.run_id }}
+          path: competitor_output.json
+          retention-days: 7
+
+  # ==========================================================================
+  # 3. Content Generation
+  # ==========================================================================
+  content-generation:
+    name: Content Generation
+    runs-on: ubuntu-latest
+    needs: competitor-analysis
+    if: ${{ github.event.inputs.run_content != 'false' && always() }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install -r services/content_generation/requirements.txt
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+
+      - name: Run content generation
+        run: |
+          MAX_ARTICLES="${{ github.event.inputs.max_articles || '5' }}"
+          python -c "
+          import asyncio
+          import sys
+          import json
+          import os
+          sys.path.insert(0, '.')
+
+          async def run():
+              max_articles = int(os.getenv('MAX_ARTICLES', '5'))
+
+              from services.content_generation.engine import ContentGenerationEngine
+
+              # Use LLM client if API key is available
+              llm = None
+              if os.getenv('ANTHROPIC_API_KEY'):
+                  from shared.llm_client import LLMClient
+                  llm = LLMClient()
+
+              engine = ContentGenerationEngine(llm_client=llm)
+              articles = await engine.batch_generate(max_articles=max_articles)
+
+              with open('articles_output.json', 'w') as f:
+                  json.dump(articles, f, indent=2)
+
+              print(f'Generated {len(articles)} articles')
+              for a in articles:
+                  print(f'  - {a[\"title\"]} ({a[\"word_count\"]} words)')
+
+          asyncio.run(run())
+          " MAX_ARTICLES="$MAX_ARTICLES"
+
+      - name: Upload articles artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: articles-${{ github.run_id }}
+          path: articles_output.json
+          retention-days: 14
+
+  # ==========================================================================
+  # 4. SEO Optimization
+  # ==========================================================================
+  seo-optimization:
+    name: SEO Optimization
+    runs-on: ubuntu-latest
+    needs: content-generation
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install -r services/seo_optimization/requirements.txt
+
+      - name: Download articles artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: articles-${{ github.run_id }}
+
+      - name: Run SEO optimization
+        run: |
+          python -c "
+          import asyncio
+          import sys
+          import json
+          sys.path.insert(0, '.')
+
+          async def run():
+              from services.seo_optimization.engine import SEOOptimizationEngine
+              engine = SEOOptimizationEngine()
+
+              with open('articles_output.json') as f:
+                  articles = json.load(f)
+
+              optimized = []
+              for article in articles:
+                  opt = await engine.optimize_article(article)
+                  optimized.append(opt)
+                  print(f'  Optimized: {opt[\"title\"]} - SEO Score: {opt[\"seo_score\"]}/100')
+
+              with open('optimized_articles.json', 'w') as f:
+                  json.dump(optimized, f, indent=2)
+
+              avg_score = sum(a['seo_score'] for a in optimized) / len(optimized)
+              print(f'Average SEO score: {avg_score:.1f}/100')
+
+          asyncio.run(run())
+          "
+
+      - name: Upload optimized articles
+        uses: actions/upload-artifact@v4
+        with:
+          name: optimized-articles-${{ github.run_id }}
+          path: optimized_articles.json
+          retention-days: 14
+
+  # ==========================================================================
+  # 5. Publishing
+  # ==========================================================================
+  publishing:
+    name: Publishing
+    runs-on: ubuntu-latest
+    needs: seo-optimization
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install -r services/publishing/requirements.txt
+
+      - name: Download optimized articles
+        uses: actions/download-artifact@v4
+        with:
+          name: optimized-articles-${{ github.run_id }}
+
+      - name: Publish articles
+        run: |
+          python -c "
+          import asyncio
+          import sys
+          import json
+          sys.path.insert(0, '.')
+
+          async def run():
+              from services.publishing.engine import PublishingEngine
+              engine = PublishingEngine()
+
+              with open('optimized_articles.json') as f:
+                  articles = json.load(f)
+
+              published = []
+              for article in articles:
+                  try:
+                      result = await engine.publish_to_github(article)
+                      published.append(result)
+                      print(f'  Published: {article[\"title\"]}')
+                      print(f'    URL: {result[\"published_url\"]}')
+                  except Exception as e:
+                      print(f'  Failed to publish {article[\"title\"]}: {e}')
+
+              print(f'Published {len(published)}/{len(articles)} articles')
+              await engine.close()
+
+          asyncio.run(run())
+          "
+
+  # ==========================================================================
+  # 6. Analytics Update
+  # ==========================================================================
+  analytics:
+    name: Analytics Update
+    runs-on: ubuntu-latest
+    needs: publishing
+    if: always()
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install -r services/seo_analytics/requirements.txt
+
+      - name: Generate SEO report
+        run: |
+          python -c "
+          import asyncio
+          import sys
+          import json
+          sys.path.insert(0, '.')
+
+          async def run():
+              from services.seo_analytics.engine import SEOAnalyticsEngine
+              engine = SEOAnalyticsEngine()
+              report = await engine.generate_report()
+
+              print('=== Weekly SEO Report ===')
+              print(json.dumps(report, indent=2))
+
+          asyncio.run(run())
+          "
+
+      - name: Check for opportunities
+        run: |
+          python -c "
+          import asyncio
+          import sys
+          sys.path.insert(0, '.')
+
+          async def run():
+              from services.seo_analytics.engine import SEOAnalyticsEngine
+              engine = SEOAnalyticsEngine()
+              opportunities = await engine.identify_opportunities()
+
+              high_priority = [o for o in opportunities if o.get('priority') == 'high']
+              print(f'Found {len(high_priority)} high-priority opportunities:')
+              for opp in high_priority:
+                  print(f'  - {opp[\"title\"]}')
+                  print(f'    Recommendation: {opp[\"recommendation\"]}')
+
+          asyncio.run(run())
+          "
+
+  # ==========================================================================
+  # Pipeline Summary
+  # ==========================================================================
+  pipeline-summary:
+    name: Pipeline Summary
+    runs-on: ubuntu-latest
+    needs: [keyword-discovery, competitor-analysis, content-generation, seo-optimization, publishing, analytics]
+    if: always()
+
+    steps:
+      - name: Generate summary
+        run: |
+          echo "# SEO Pipeline Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Step | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Keyword Discovery | ${{ needs.keyword-discovery.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Competitor Analysis | ${{ needs.competitor-analysis.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Content Generation | ${{ needs.content-generation.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| SEO Optimization | ${{ needs.seo-optimization.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Publishing | ${{ needs.publishing.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Analytics | ${{ needs.analytics.result }} |" >> $GITHUB_STEP_SUMMARY

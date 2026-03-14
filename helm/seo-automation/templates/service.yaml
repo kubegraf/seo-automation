@@ -1,0 +1,37 @@
+{{- $services := list "scheduler" "keyword-discovery" "competitor-analysis" "content-generation" "seo-optimization" "publishing" "seo-analytics" -}}
+{{- range $services }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ . }}
+  namespace: {{ $.Values.namespace }}
+  labels:
+    app: {{ . }}
+spec:
+  selector:
+    app: {{ . }}
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: http
+  type: ClusterIP
+{{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashboard
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: dashboard
+spec:
+  selector:
+    app: dashboard
+  ports:
+    - port: 8501
+      targetPort: 8501
+      protocol: TCP
+      name: streamlit
+  type: ClusterIP

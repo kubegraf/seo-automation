@@ -1,0 +1,19 @@
+apiVersion: v2
+name: seo-automation
+description: AI-driven SEO automation platform for Kubegraf
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - seo
+  - automation
+  - kubernetes
+  - ai
+  - kubegraf
+home: https://kubegraf.com
+sources:
+  - https://github.com/kubegraf/seo-automation
+maintainers:
+  - name: Kubegraf Team
+    email: engineering@kubegraf.com
+    url: https://kubegraf.com

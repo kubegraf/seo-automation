@@ -1,0 +1,88 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: seo-pipeline-weekly
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "seo-automation.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cronjob
+spec:
+  # Every Monday at 2 AM UTC
+  schedule: "0 2 * * 1"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: seo-pipeline-cron
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: pipeline-trigger
+              image: curlimages/curl:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  echo "Triggering full SEO pipeline..."
+                  curl -X POST http://scheduler:8000/trigger/full-pipeline \
+                    -H "Content-Type: application/json" \
+                    -d '{}' \
+                    --retry 3 \
+                    --retry-delay 10 \
+                    -v
+                  echo "Pipeline triggered successfully"
+              resources:
+                requests:
+                  cpu: "10m"
+                  memory: "32Mi"
+                limits:
+                  cpu: "50m"
+                  memory: "64Mi"
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: seo-rankings-daily
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "seo-automation.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cronjob-daily
+spec:
+  # Every day at 6 AM UTC
+  schedule: "0 6 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 5
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: seo-rankings-cron
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: rankings-trigger
+              image: curlimages/curl:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  echo "Triggering daily rankings check..."
+                  curl -X POST http://seo-analytics:8000/run \
+                    -H "Content-Type: application/json" \
+                    -d '{}' \
+                    --retry 3 \
+                    --retry-delay 10
+                  echo "Rankings check triggered"
+              resources:
+                requests:
+                  cpu: "10m"
+                  memory: "32Mi"
+                limits:
+                  cpu: "50m"
+                  memory: "64Mi"
