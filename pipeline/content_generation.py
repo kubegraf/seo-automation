@@ -15,6 +15,7 @@ from shared import storage
 logger = logging.getLogger(__name__)
 
 ARTICLE_TOPICS = [
+    # ── Core Kubegraf deep-dives ──────────────────────────────────────────────
     {
         "title": "AI Root Cause Analysis for Kubernetes: How Kubegraf Automates Incident Investigation",
         "keywords": ["kubernetes root cause analysis", "ai incident investigation", "kubernetes debugging"],
@@ -28,18 +29,42 @@ ARTICLE_TOPICS = [
         "category": "kubernetes_ops",
     },
     {
-        "title": "AI SRE Platforms Comparison 2024: Kubegraf vs Komodor vs Deductive AI",
-        "keywords": ["ai sre platform comparison", "kubegraf vs komodor", "kubernetes sre tools"],
-        "type": "comparison",
-        "category": "sre",
-        "competitor_target": "Komodor",
-    },
-    {
         "title": "How AI Can Fix Production Kubernetes Incidents in Minutes",
         "keywords": ["ai kubernetes production incidents", "automated incident resolution", "kubernetes ai fix"],
         "type": "deep_dive",
         "category": "ai_operations",
     },
+    {
+        "title": "How to Reduce Mean Time to Resolution (MTTR) for Kubernetes Incidents",
+        "keywords": ["kubernetes mttr", "reduce mttr kubernetes", "kubernetes incident resolution time"],
+        "type": "deep_dive",
+        "category": "sre",
+    },
+    {
+        "title": "Building a Kubernetes AI SRE Stack in 2025",
+        "keywords": ["kubernetes ai sre stack", "sre automation kubernetes", "ai sre tools 2025"],
+        "type": "deep_dive",
+        "category": "sre",
+    },
+    {
+        "title": "Kubernetes Observability with AI: Beyond Metrics and Logs",
+        "keywords": ["kubernetes observability ai", "kubernetes monitoring ai", "ai observability platform"],
+        "type": "deep_dive",
+        "category": "monitoring",
+    },
+    {
+        "title": "How to Build an Automated Kubernetes On-Call Runbook with AI",
+        "keywords": ["kubernetes runbook automation", "automated on-call kubernetes", "ai runbook"],
+        "type": "deep_dive",
+        "category": "sre",
+    },
+    {
+        "title": "AI-Driven SRE: Replacing Manual Toil with Automated Intelligence",
+        "keywords": ["ai driven sre", "sre toil automation", "automated site reliability engineering"],
+        "type": "deep_dive",
+        "category": "sre",
+    },
+    # ── Tutorials ────────────────────────────────────────────────────────────
     {
         "title": "Kubernetes Troubleshooting Automation: From Alert to Fix",
         "keywords": ["kubernetes troubleshooting automation", "prometheus to fix", "kubernetes alert remediation"],
@@ -47,12 +72,36 @@ ARTICLE_TOPICS = [
         "category": "kubernetes_ops",
     },
     {
-        "title": "Kubegraf vs Rootly: Which Incident Management Platform is Right for You?",
-        "keywords": ["kubegraf vs rootly", "incident management kubernetes", "rootly alternative kubernetes"],
-        "type": "comparison",
-        "category": "sre",
-        "competitor_target": "Rootly",
+        "title": "Prometheus Alert to Auto-Remediation: The Complete Guide",
+        "keywords": ["prometheus alert remediation", "prometheus to fix automation", "alertmanager automation"],
+        "type": "tutorial",
+        "category": "monitoring",
     },
+    {
+        "title": "Setting Up AI-Powered Kubernetes Alerting with Grafana and Kubegraf",
+        "keywords": ["grafana kubernetes ai alerting", "grafana ai integration", "kubernetes grafana automation"],
+        "type": "tutorial",
+        "category": "monitoring",
+    },
+    {
+        "title": "How to Automate Kubernetes Deployment Rollbacks with AI",
+        "keywords": ["kubernetes rollback automation", "automated deployment rollback", "ai kubernetes rollback"],
+        "type": "tutorial",
+        "category": "kubernetes_ops",
+    },
+    {
+        "title": "Kubernetes Resource Optimization with AI: Cut Cloud Costs Automatically",
+        "keywords": ["kubernetes resource optimization ai", "kubernetes cost optimization", "ai kubernetes right-sizing"],
+        "type": "tutorial",
+        "category": "kubernetes_ops",
+    },
+    {
+        "title": "OpenTelemetry + Kubernetes: AI-Powered Distributed Tracing for SRE",
+        "keywords": ["opentelemetry kubernetes ai", "distributed tracing kubernetes", "opentelemetry sre"],
+        "type": "tutorial",
+        "category": "monitoring",
+    },
+    # ── Kubernetes incident deep-dives ────────────────────────────────────────
     {
         "title": "Kubernetes OOMKilled: Automatic Detection and Remediation with AI",
         "keywords": ["kubernetes oomkilled", "oomkilled remediation", "kubernetes memory limit fix"],
@@ -66,16 +115,55 @@ ARTICLE_TOPICS = [
         "category": "kubernetes_ops",
     },
     {
-        "title": "Prometheus Alert to Auto-Remediation: The Complete Guide",
-        "keywords": ["prometheus alert remediation", "prometheus to fix automation", "alertmanager automation"],
-        "type": "tutorial",
-        "category": "monitoring",
+        "title": "Kubernetes ImagePullBackOff: AI-Assisted Debugging and Auto-Fix",
+        "keywords": ["kubernetes imagepullbackoff", "imagepullbackoff fix", "kubernetes image pull error"],
+        "type": "incident_example",
+        "category": "kubernetes_ops",
     },
     {
-        "title": "Building a Kubernetes AI SRE Stack in 2024",
-        "keywords": ["kubernetes ai sre stack", "sre automation kubernetes", "ai sre tools"],
-        "type": "deep_dive",
+        "title": "Kubernetes Pending Pods: Root Cause Analysis and Automated Scheduling Fix",
+        "keywords": ["kubernetes pending pods", "pod scheduling failure", "kubernetes pending pod fix"],
+        "type": "incident_example",
+        "category": "kubernetes_ops",
+    },
+    {
+        "title": "Kubernetes Node NotReady: AI-Powered Detection and Recovery",
+        "keywords": ["kubernetes node notready", "node notready fix", "kubernetes node failure recovery"],
+        "type": "incident_example",
+        "category": "kubernetes_ops",
+    },
+    {
+        "title": "Kubernetes Deployment Stuck in Rollout: How AI Detects and Fixes It",
+        "keywords": ["kubernetes deployment stuck", "stuck rollout kubernetes", "kubernetes rollout failure"],
+        "type": "incident_example",
+        "category": "kubernetes_ops",
+    },
+    {
+        "title": "Kubernetes Pod Eviction Storms: AI Prevention and Remediation",
+        "keywords": ["kubernetes pod eviction", "pod eviction storm", "kubernetes eviction ai"],
+        "type": "incident_example",
+        "category": "kubernetes_ops",
+    },
+    {
+        "title": "Kubernetes etcd Performance Issues: AI Diagnosis and Tuning",
+        "keywords": ["kubernetes etcd performance", "etcd latency kubernetes", "kubernetes etcd issues"],
+        "type": "incident_example",
+        "category": "kubernetes_ops",
+    },
+    # ── Competitor comparisons (all 8) ───────────────────────────────────────
+    {
+        "title": "Kubegraf vs Komodor: AI-Native SRE vs Kubernetes Visibility Platform",
+        "keywords": ["kubegraf vs komodor", "komodor alternative", "kubernetes sre tools comparison"],
+        "type": "comparison",
         "category": "sre",
+        "competitor_target": "Komodor",
+    },
+    {
+        "title": "Kubegraf vs Rootly: Which Incident Management Platform is Right for You?",
+        "keywords": ["kubegraf vs rootly", "incident management kubernetes", "rootly alternative kubernetes"],
+        "type": "comparison",
+        "category": "sre",
+        "competitor_target": "Rootly",
     },
     {
         "title": "Kubegraf vs Incident.io: Kubernetes-Native vs General Incident Management",
@@ -85,9 +173,51 @@ ARTICLE_TOPICS = [
         "competitor_target": "Incident.io",
     },
     {
-        "title": "How to Reduce Mean Time to Resolution (MTTR) for Kubernetes Incidents",
-        "keywords": ["kubernetes mttr", "reduce mttr kubernetes", "kubernetes incident resolution time"],
-        "type": "deep_dive",
+        "title": "Kubegraf vs Deductive AI: Comparing AI Root Cause Analysis Platforms",
+        "keywords": ["kubegraf vs deductive ai", "deductive ai alternative", "ai root cause analysis comparison"],
+        "type": "comparison",
+        "category": "ai_operations",
+        "competitor_target": "Deductive AI",
+    },
+    {
+        "title": "Kubegraf vs Harness: AI SRE vs Enterprise CI/CD and Feature Flags",
+        "keywords": ["kubegraf vs harness", "harness alternative sre", "harness kubernetes incident management"],
+        "type": "comparison",
+        "category": "sre",
+        "competitor_target": "Harness",
+    },
+    {
+        "title": "Kubegraf vs Dash0: AI Incident Automation vs OpenTelemetry Observability",
+        "keywords": ["kubegraf vs dash0", "dash0 alternative", "opentelemetry observability vs ai sre"],
+        "type": "comparison",
+        "category": "monitoring",
+        "competitor_target": "Dash0",
+    },
+    {
+        "title": "Kubegraf vs SRE.ai: Battle of the AI Site Reliability Platforms",
+        "keywords": ["kubegraf vs sre.ai", "sre.ai alternative", "ai sre platform comparison 2025"],
+        "type": "comparison",
+        "category": "sre",
+        "competitor_target": "SRE.ai",
+    },
+    {
+        "title": "Kubegraf vs Resolve Systems: AI-Native Kubernetes SRE vs ITSM Automation",
+        "keywords": ["kubegraf vs resolve systems", "resolve systems alternative", "itsm vs ai sre kubernetes"],
+        "type": "comparison",
+        "category": "sre",
+        "competitor_target": "Resolve Systems",
+    },
+    # ── SEO comparison round-ups ──────────────────────────────────────────────
+    {
+        "title": "Top 8 AI SRE Platforms Compared: 2025 Buyer's Guide",
+        "keywords": ["ai sre platform comparison 2025", "best kubernetes sre tools", "ai incident management platforms"],
+        "type": "comparison",
+        "category": "sre",
+    },
+    {
+        "title": "Best Kubernetes Incident Management Tools in 2025",
+        "keywords": ["best kubernetes incident management", "kubernetes incident tools 2025", "k8s incident platform"],
+        "type": "comparison",
         "category": "sre",
     },
 ]

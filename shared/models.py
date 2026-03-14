@@ -58,4 +58,22 @@ class SEOReport(BaseModel):
     top_keywords: List[str]
     top_articles: List[str]
     recommendations: List[str]
+    total_real_clicks: int = 0
+    total_real_impressions: int = 0
+    real_data_sources: List[str] = []
+    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+
+class BacklinkOpportunity(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    article_title: str
+    article_slug: str
+    article_url: str
+    target_site: str
+    approach: str  # "cross_post", "syndication", "engagement", "contribute"
+    priority: str  # "high", "medium", "low"
+    outreach_draft: str = ""
+    cross_post_intro: str = ""
+    status: str = "draft"  # "draft", "submitted", "acquired", "rejected"
+    issue_url: Optional[str] = None
     created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())

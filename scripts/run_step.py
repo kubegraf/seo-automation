@@ -13,14 +13,15 @@ logging.basicConfig(
 )
 
 STEP_MAP = {
-    "keyword_discovery":  "pipeline.keyword_discovery",
+    "keyword_discovery":   "pipeline.keyword_discovery",
     "competitor_analysis": "pipeline.competitor_analysis",
-    "content_generation": "pipeline.content_generation",
-    "seo_optimization":   "pipeline.seo_optimization",
-    "publishing":         "pipeline.publishing",
+    "content_generation":  "pipeline.content_generation",
+    "seo_optimization":    "pipeline.seo_optimization",
+    "publishing":          "pipeline.publishing",
+    "render_articles":     "scripts.render_articles",
     "backlink_automation": "pipeline.backlink_automation",
-    "seo_analytics":      "pipeline.seo_analytics",
-    "dashboard":          "scripts.generate_dashboard",
+    "seo_analytics":       "pipeline.seo_analytics",
+    "dashboard":           "scripts.generate_dashboard",
 }
 
 

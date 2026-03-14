@@ -18,18 +18,22 @@ on:
           - content_generation
           - seo_optimization
           - publishing
+          - backlink_automation
           - seo_analytics
       articles_per_run:
         description: 'Number of articles to generate'
         required: false
-        default: '3'
+        default: '5'
         type: string
 
 env:
   GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  ARTICLES_PER_RUN: ${{ github.event.inputs.articles_per_run || '3' }}
-  KEYWORDS_PER_RUN: '25'
+  GITHUB_REPOSITORY: ${{ github.repository }}
+  SERP_API_KEY: ${{ secrets.SERP_API_KEY }}
+  GSC_CREDENTIALS: ${{ secrets.GSC_CREDENTIALS }}
+  ARTICLES_PER_RUN: ${{ github.event.inputs.articles_per_run || '5' }}
+  KEYWORDS_PER_RUN: '30'
   PYTHONPATH: ${{ github.workspace }}
 
 jobs:
@@ -72,7 +76,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Pull latest (from previous step)
+      - name: Pull latest
         run: git pull origin main
 
       - uses: actions/setup-python@v5
@@ -180,21 +184,57 @@ jobs:
       - name: Publish articles to docs/blog/
         run: python scripts/run_step.py publishing
 
+      - name: Render articles to HTML
+        run: python scripts/render_articles.py
+
       - name: Generate SEO dashboard
         run: python scripts/run_step.py dashboard
 
-      - name: Commit published articles and dashboard
+      - name: Commit published articles, HTML pages, and dashboard
         run: |
           git config user.name "Kubegraf SEO Bot"
           git config user.email "seo-bot@kubegraf.io"
           git add docs/ data/articles.json
-          git diff --staged --quiet || git commit -m "🚀 Publish articles + update dashboard [skip ci]"
+          git diff --staged --quiet || git commit -m "🚀 Publish articles + render HTML + update dashboard [skip ci]"
+          git push
+
+  backlink-automation:
+    name: 🔗 Backlink Automation
+    runs-on: ubuntu-latest
+    needs: publishing
+    if: ${{ github.event.inputs.step == 'all' || github.event.inputs.step == 'backlink_automation' || github.event_name == 'schedule' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull latest
+        run: git pull origin main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - run: pip install -r requirements.txt
+
+      - name: Generate outreach drafts and create tracking issues
+        run: python scripts/run_step.py backlink_automation
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit backlink data
+        run: |
+          git config user.name "Kubegraf SEO Bot"
+          git config user.email "seo-bot@kubegraf.io"
+          git add data/backlinks.json
+          git diff --staged --quiet || git commit -m "🔗 Update backlink outreach drafts [skip ci]"
           git push
 
   seo-analytics:
     name: 📊 SEO Analytics
     runs-on: ubuntu-latest
-    needs: publishing
+    needs: backlink-automation
     if: ${{ github.event.inputs.step == 'all' || github.event.inputs.step == 'seo_analytics' || github.event_name == 'schedule' }}
     steps:
       - uses: actions/checkout@v4
@@ -211,21 +251,24 @@ jobs:
 
       - run: pip install -r requirements.txt
 
-      - name: Generate weekly SEO report
+      - name: Generate weekly SEO report + sitemap
         run: python scripts/run_step.py seo_analytics
+        env:
+          SERP_API_KEY: ${{ secrets.SERP_API_KEY }}
+          GSC_CREDENTIALS: ${{ secrets.GSC_CREDENTIALS }}
 
-      - name: Commit SEO report
+      - name: Commit SEO report, rankings, and sitemap
         run: |
           git config user.name "Kubegraf SEO Bot"
           git config user.email "seo-bot@kubegraf.io"
-          git add data/seo_reports.json
-          git diff --staged --quiet || git commit -m "📊 Weekly SEO report [skip ci]"
+          git add data/seo_reports.json data/rankings.json docs/sitemap.xml
+          git diff --staged --quiet || git commit -m "📊 Weekly SEO report + sitemap [skip ci]"
           git push
 
   pipeline-summary:
     name: 📋 Pipeline Summary
     runs-on: ubuntu-latest
-    needs: [keyword-discovery, competitor-analysis, content-generation, seo-optimization, publishing, seo-analytics]
+    needs: [keyword-discovery, competitor-analysis, content-generation, seo-optimization, publishing, backlink-automation, seo-analytics]
     if: ${{ always() && (github.event_name == 'schedule' || github.event.inputs.step == 'all') }}
     steps:
       - uses: actions/checkout@v4
@@ -245,19 +288,39 @@ jobs:
       - name: Print pipeline summary
         run: |
           python -c "
-          import sys
+          import sys, json
+          from pathlib import Path
           sys.path.insert(0, '.')
           from shared import storage
-          articles = storage.load_articles()
-          keywords = storage.load_keywords()
+
+          articles    = storage.load_articles()
+          keywords    = storage.load_keywords()
           competitors = storage.load_competitors()
-          published = [a for a in articles if a.status == 'published']
-          print(f'Pipeline Summary:')
-          print(f'  Total articles: {len(articles)}')
-          print(f'  Published: {len(published)}')
+          reports     = storage.load_reports()
+          published   = [a for a in articles if a.status == 'published']
+
+          backlinks_path = Path('data/backlinks.json')
+          backlinks = json.loads(backlinks_path.read_text()) if backlinks_path.exists() else []
+
+          rankings_path = Path('data/rankings.json')
+          rankings = json.loads(rankings_path.read_text()) if rankings_path.exists() else {}
+
+          print('=' * 60)
+          print('  KUBEGRAF SEO PIPELINE SUMMARY')
+          print('=' * 60)
+          print(f'  Total articles  : {len(articles)}')
+          print(f'  Published       : {len(published)}')
           print(f'  Keywords tracked: {len(keywords)}')
-          print(f'  Competitors analyzed: {len(competitors)}')
+          print(f'  Competitors     : {len(competitors)}')
+          print(f'  Backlink opps   : {len(backlinks)}')
           if articles:
-              avg_score = sum(a.seo_score for a in articles) / len(articles)
-              print(f'  Avg SEO score: {avg_score:.1f}/100')
+              avg = sum(a.seo_score for a in articles) / len(articles)
+              print(f'  Avg SEO score   : {avg:.1f}/100')
+          if reports:
+              r = sorted(reports, key=lambda x: x.created_at, reverse=True)[0]
+              print(f'  Latest report   : {r.week}')
+              real = getattr(r, \"total_real_clicks\", 0)
+              if real:
+                  print(f'  Real clicks(28d): {real:,}')
+          print('=' * 60)
           "
