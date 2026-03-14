@@ -5,7 +5,7 @@ Tracks rankings, calculates traffic estimates, generates weekly reports.
 import json
 import logging
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, date
 from shared.gemini_client import generate
 from shared.models import SEOReport
 from shared import storage
@@ -33,7 +33,7 @@ def estimate_monthly_traffic(position: int, search_volume: str) -> int:
     return int(vol * ctr)
 
 
-def track_rankings(keywords) -> dict:
+def track_rankings(keywords: list) -> dict:
     """Simulate rank tracking (in production: use SerpAPI or Google Search Console)."""
     rankings = {}
     for kw in keywords:
@@ -70,7 +70,7 @@ Current state:
 - Published articles: {published_count}
 - Average SEO score: {sum(a.seo_score for a in articles) / max(len(articles), 1):.1f}/100
 - Articles needing improvement (score < 60): {len(low_score_articles)}
-- Keyword opportunities not yet covered: {gap_keywords[:10]}
+- Keyword opportunities not yet covered: {', '.join(gap_keywords[:10])}
 
 Generate 5 specific, actionable SEO recommendations for the next week.
 Return a JSON array of 5 recommendation strings.
@@ -97,7 +97,6 @@ Each recommendation should be specific and actionable (e.g., "Write a tutorial o
 
 def run():
     """Main entrypoint for SEO analytics pipeline step."""
-    from datetime import date
     from rich.console import Console
     console = Console()
 

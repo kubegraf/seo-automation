@@ -133,7 +133,6 @@ competitor_strengths should be 2-3 areas where competitor is stronger.
 
 def run():
     """Main entrypoint for competitor analysis pipeline step."""
-    import os
     from rich.console import Console
     console = Console()
 

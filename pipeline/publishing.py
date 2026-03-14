@@ -50,9 +50,14 @@ def ensure_internal_links(content: str, all_articles: list) -> str:
     """Add a 'Related Articles' section if not present."""
     if "## Related Articles" in content or "## Related" in content:
         return content
-
-    # Find 2-3 related articles by matching keywords
-    return content
+    if not all_articles:
+        return content
+    # Add up to 3 related article links at the end
+    related = all_articles[:3]
+    lines = ["\n## Related Articles\n"]
+    for a in related:
+        lines.append(f"- [{a.title}](/blog/{a.slug})")
+    return content + "\n".join(lines)
 
 
 def publish_article(article: Article, all_articles: list) -> str:
@@ -147,7 +152,7 @@ def run():
     # Generate blog index
     index_content = generate_blog_index(articles)
     index_path = DOCS_DIR / "index.md"
-    with open(index_path, "w") as f:
+    with open(index_path, "w", encoding="utf-8") as f:
         f.write(index_content)
 
     console.print(f"\n[green]✅ Published {published_count} articles to docs/blog/[/green]")

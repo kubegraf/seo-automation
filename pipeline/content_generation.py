@@ -295,7 +295,7 @@ def generate_article(topic: dict, existing_articles: list) -> Article:
     if article_type == "comparison" and competitor_target:
         competitors = storage.load_competitors()
         comp = next((c for c in competitors if c.name == competitor_target), None)
-        focus = comp.focus_areas[0] if comp else "incident management platform"
+        focus = comp.focus_areas[0] if comp and comp.focus_areas else "incident management platform"
 
         prompt = COMPARISON_PROMPT.format(
             competitor_name=competitor_target,

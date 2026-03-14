@@ -226,7 +226,8 @@ def generate():
     competitor_cards = ""
     for c in competitors:
         gaps = "".join(f'<span class="gap-tag">{g}</span>' for g in c.gap_keywords[:6])
-        tier_badge = f'<span class="badge badge-{"green" if c.traffic_tier=="high" else "yellow" if c.traffic_tier=="medium" else "red"}">{c.traffic_tier} traffic</span>'
+        tier_color = "green" if c.traffic_tier == "high" else ("yellow" if c.traffic_tier == "medium" else "red")
+        tier_badge = f'<span class="badge badge-{tier_color}">{c.traffic_tier} traffic</span>'
         competitor_cards += f'''<div class="competitor-card">
             <h3>{c.name} {tier_badge}</h3>
             <div class="domain">{c.domain}</div>
@@ -268,12 +269,15 @@ def generate():
     # Write dashboard
     dashboard_dir = Path(__file__).parent.parent / "docs" / "dashboard"
     dashboard_dir.mkdir(parents=True, exist_ok=True)
-    with open(dashboard_dir / "index.html", "w") as f:
+    with open(dashboard_dir / "index.html", "w", encoding="utf-8") as f:
         f.write(html)
 
     print(f"✅ Dashboard generated: docs/dashboard/index.html")
     print(f"   {len(articles)} articles | {len(keywords)} keywords | {len(competitors)} competitors")
 
+
+# Alias so run_step.py can call module.run() consistently
+run = generate
 
 if __name__ == "__main__":
     generate()

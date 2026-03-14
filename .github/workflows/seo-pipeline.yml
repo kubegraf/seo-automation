@@ -226,7 +226,7 @@ jobs:
     name: 📋 Pipeline Summary
     runs-on: ubuntu-latest
     needs: [keyword-discovery, competitor-analysis, content-generation, seo-optimization, publishing, seo-analytics]
-    if: always()
+    if: ${{ always() && (github.event_name == 'schedule' || github.event.inputs.step == 'all') }}
     steps:
       - uses: actions/checkout@v4
         with:

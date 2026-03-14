@@ -1,6 +1,8 @@
 import json
-import os
+import logging
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 from typing import List, TypeVar, Type, Optional
 from pydantic import BaseModel
 
@@ -14,17 +16,21 @@ def _load_json(filename: str) -> list:
     if not path.exists():
         return []
     try:
-        with open(path, 'r') as f:
+        with open(path, 'r', encoding='utf-8') as f:
             return json.load(f)
-    except (json.JSONDecodeError, IOError):
+    except json.JSONDecodeError as e:
+        logger.error(f"Failed to parse {filename}: {e}")
+        return []
+    except IOError as e:
+        logger.error(f"Failed to read {filename}: {e}")
         return []
 
 
 def _save_json(filename: str, data: list) -> None:
     DATA_DIR.mkdir(exist_ok=True)
     path = DATA_DIR / filename
-    with open(path, 'w') as f:
-        json.dump(data, f, indent=2, default=str)
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2)
 
 
 def load_all(filename: str, model_class: Type[T]) -> List[T]:
@@ -33,8 +39,8 @@ def load_all(filename: str, model_class: Type[T]) -> List[T]:
     for item in raw:
         try:
             result.append(model_class(**item))
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning(f"Skipping malformed record in {filename}: {e}")
     return result
 
 
@@ -44,18 +50,18 @@ def save_all(filename: str, items: List[BaseModel]) -> None:
 
 def upsert(filename: str, item: BaseModel, model_class: Type[T]) -> None:
     items = load_all(filename, model_class)
-    existing_ids = {i.id for i in items}  # type: ignore
-    if item.id in existing_ids:  # type: ignore
-        items = [item if i.id == item.id else i for i in items]  # type: ignore
+    item_id = getattr(item, 'id', None)
+    matched = any(getattr(i, 'id', None) == item_id for i in items)
+    if matched:
+        items = [item if getattr(i, 'id', None) == item_id else i for i in items]
     else:
-        items.append(item)  # type: ignore
+        items.append(item)
     save_all(filename, items)
 
 
 def find_by_id(filename: str, item_id: str, model_class: Type[T]) -> Optional[T]:
-    items = load_all(filename, model_class)
-    for item in items:
-        if item.id == item_id:  # type: ignore
+    for item in load_all(filename, model_class):
+        if getattr(item, 'id', None) == item_id:
             return item
     return None
 
